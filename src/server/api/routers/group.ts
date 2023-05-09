@@ -16,20 +16,20 @@ export const groupRouter = createTRPCRouter({
     });
   }),
 
-  like: protectedProcedure.query(({ input, ctx }) => {
-    return ctx.prisma.group.update({
-      where: {
-        id: input.id
-      },
-      data: {
-        likes: {
-          connect: {
-            id: ctx.session?.user?.id
-          }
-        }
-      }
-    });
-  }),
+  // like: protectedProcedure.query(({ input, ctx }) => {
+  //   return ctx.prisma.group.update({
+  //     where: {
+  //       id: input.id
+  //     },
+  //     data: {
+  //       likes: {
+  //         connect: {
+  //           id: ctx.session?.user?.id
+  //         }
+  //       }
+  //     }
+  //   });
+  // }),
+
   
-  }
 });
