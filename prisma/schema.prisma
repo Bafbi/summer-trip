@@ -22,8 +22,35 @@ model Example {
 }
 
 model Group {
-  id      String @id @default(cuid())
-  members User[]
+  id          String     @id @default(cuid())
+  name        String     @default("New Group")
+  description String?
+  destination String?
+  members     User[]
+  Activity    Activity[]
+}
+
+model Activity {
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+  group       Group   @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  groupId     String
+  Vote        Vote[]
+
+  @@index([groupId])
+}
+
+model Vote {
+  id         String   @id @default(cuid())
+  vote       Int
+  activityId String
+  activity   Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([activityId])
+  @@index([userId])
 }
 
 // Necessary for Next auth
@@ -65,6 +92,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   groups        Group[]
+  Vote          Vote[]
 }
 
 model VerificationToken {
