@@ -1,85 +1,105 @@
-import { useState } from "react";
-import { type NextPage } from "next";
+import { NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { api } from "~/utils/api";
+import { useRouter } from "next/router";
+import { DropdownMenu } from "~/components/menu";
+import { useState } from "react";
+import Image from "next/image";
 
 const GroupsPage: NextPage = () => {
+  const { data: sessionData } = useSession({ required: true });
+  const { data: groupsData, isLoading: groupsLoading } =
+    api.group.getAll.useQuery();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    await signOut({ redirect: true, callbackUrl: "/" });
+    // redirect("/");
+    // router.push(""); // Redirige vers la page de connexion après déconnexion
+  };
+
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const { data: sessionData } = useSession();
-
-  const { data: groupsData, isLoading: groupsLoading } = api.group.getAll.useQuery();
-
-  if (groupsLoading) return <div>Loading...</div>;
-
-  if (!groupsData) return <div>Something went wrong</div>;
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
-  const handleSignOut = () => {
-    signOut();
-  };
+  if (groupsLoading) return <div>Loading...</div>;
+  if (!groupsData) return <div>Something went wrong</div>;
 
   return (
     <>
       <Head>
         <title>Groups</title>
       </Head>
-      <main>
-        <div className="flex justify-end pt-4 pr-4">
-          <div className="relative">
-            <button
-              className="flex items-center space-x-2 text-white hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50"
-              onClick={toggleDropdown}
-            >
-              <span>{sessionData?.user?.name}</span>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10 12a2 2 0 100-4 2 2 0 000 4z"
-                  clipRule="evenodd"
-                />
-                <path
-                  fillRule="evenodd"
-                  d="M3 10a7 7 0 1114 0 7 7 0 01-14 0zm7-7a1 1 0 012 0v2a1 1 0 11-2 0V3zm0 12a1 1 0 100 2 1 1 0 000-2z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </button>
-            {isDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2">
-                <Link href="/profile">
-                  <a className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900">
-                    Profile
-                  </a>
-                </Link>
-                <Link href="/settings">
-                  <a className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900">
-                    Settings
-                  </a>
-                </Link>
-                <Link href="/help">
-                  <a className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900">
-                    Help
-                  </a>
-                </Link>
-                <button
-                  className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                  onClick={handleSignOut}
-                >
-                  Sign out
-                </button>
-              </div>
+
+      <header className="flex items-center bg-[#1E5552] w-screen p-2 justify-between min-h-fit">
+        <button className="">
+        {sessionData?.user.image ? (
+              <Image
+                className="rounded-full w-fit h-fit"
+                src={"/judog.PNG"}
+                alt="User Logo"
+                width={64}
+                height={64}
+              />
+            ) : (
+              "Sign in"
+            )} 
+
+        </button>
+        <h1 className="flex text-[#E49A0A] font-bold text-xl">
+          {sessionData?.user?.name}
+        </h1>
+        
+        <button
+        
+          className="w-fit h-fit"
+          onClick={toggleDropdown}
+        >
+          {sessionData?.user.image ? (
+              <Image
+                className="rounded-full w-fit h-fit"
+                src={sessionData.user.image}
+                alt="User Logo"
+                width={64}
+                height={64}
+              />
+            ) : (
+              "Sign in"
             )}
-          </div>
+        </button>
+        {isDropdownOpen && <DropdownMenu />}
+      </header>
+
+      <main className="min-h-screen bg-[#40534D]">
+        <div className=" grid grid-cols-2 gap-6 p-4">
+          <Link href="/create-group">
+            <div className=" flex flex-col items-center justify-center gap-2 rounded-lg bg-[white] px-2 p-4">
+              <div className="flex h-full flex-col items-center justify-end">
+                <img src="/plus.png" alt="Add Group" className="h-9 w-9 " />
+                <h1 className="mt-2 text-xs ">  
+                  Create Group
+                </h1>
+              </div>
+            </div>
+          </Link>
+          {groupsData.map((group) => {
+            return (
+              <Link key={group.id} href={`/g/${group.id}`}>
+                <div className=" flex flex-col items-center justify-center gap-2 rounded-lg bg-white px-2 p-4">
+                  <div className="flex h-full flex-col items-center justify-end">
+                    <div className="h-8 w-8 rounded-full bg-[#1CCDB3]"></div>
+                    <h1 className="mt-2 text-xs ">
+                      {group.id}
+                    </h1>
+                  </div>
+                </div>
+              </Link>
+            );
+          })}
         </div>
       </main>
     </>
