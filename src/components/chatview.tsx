@@ -1,6 +1,6 @@
 import { api } from "~/utils/api";
 
-export const ChatView = (props: { groupId: string }) => {
+const ChatView = (props: { groupId: string }) => {
   const groupId = props.groupId;
 
   const { data: groupData, isLoading: groupLoading } =
@@ -16,3 +16,5 @@ export const ChatView = (props: { groupId: string }) => {
     </div>
   );
 };
+
+export default ChatView;
