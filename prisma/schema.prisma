@@ -92,6 +92,8 @@ model User {
   accounts      Account[]
   sessions      Session[]
   groups        Group[]
+  chatsSent     Chat[]    @relation("ChatSender")
+  chatsReceived Chat[]    @relation("ChatReceiver")
   Vote          Vote[]
 }
 
@@ -101,4 +103,19 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model Chat {
+  id         String   @id @default(cuid())
+  senderId   String
+  receiverId String
+  content    String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  sender   User @relation("ChatSender", fields: [senderId], references: [id])
+  receiver User @relation("ChatReceiver", fields: [receiverId], references: [id])
+
+  @@index([senderId])
+  @@index([receiverId])
 }
