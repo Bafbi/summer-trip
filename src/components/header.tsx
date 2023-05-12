@@ -5,6 +5,7 @@ import { DropdownMenu } from "~/components/menu";
 import Head from "next/head";
 import { useSession, signOut } from "next-auth/react";
 import { api } from "~/utils/api";
+import DropMenu from "~/components/dropMenu";
 
 const Header = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -22,7 +23,7 @@ const Header = () => {
     <>
       {/* Header */}
       <header className="">
-        <div className="flex justify-between items-center h-16 bg-[#1E5552] text-[#E49A0A] px-4">
+        <div className="flex h-16 items-center justify-between bg-[#1E5552] px-4 text-[#E49A0A]">
           <Link href="/g">
             <button
               className="text-[#E49A0A] hover:text-gray-300 focus:outline-none"
@@ -69,44 +70,13 @@ const Header = () => {
               )}
             </svg>
           </button>
-          </div>
-          <nav
-          className={`${
-            isMenuOpen ? "h-52" : "h-0"
-          } overflow-hidden bg-[#1E5552] text-[#E49A0A] transition-height ease-in-out duration-500 absolute w-screen`}
-        >
-          <ul className="flex flex-col items-center justify-evenly h-full">
-            <li>
-                <Link href="/profile">
-                  <span className="block px-4 py-2 text-lg font-semibold
-                  text-[#E49A0A] hover:bg-gray-100 hover:text-gray-900">
-                    Profile
-                  </span>
-              </Link>
-            </li> 
-            <li>
-              <Link href="/settings">
-                <span className="block px-4 py-2 text-lg font-semibold
-                text-[#E49A0A] hover:bg-gray-100 hover:text-gray-900">
-                  Settings
-                </span>
-              </Link>
-            </li>
-            <li>
-              <button
-                className="block w-full text-left px-4 py-2 text-lg text-[#E49A0A] font-semibold hover:bg-gray-100 hover:text-gray-900"
-                onClick={() => void signOut({redirect: true, callbackUrl: '/'})}
-              >
-                Sign out
-              </button>
-            </li>
-          </ul>
-        </nav>
-        </header>
-        {/* Menu */}
-        
+        </div>
+        {/* Dropdown */}
+        <DropMenu isOpen={isMenuOpen} />
+      </header>
+      {/* Menu */}
     </>
   );
-}
+};
 
 export default Header;
