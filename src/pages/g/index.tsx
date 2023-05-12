@@ -56,7 +56,7 @@ const GroupsPage: NextPage = () => {
             ))}
             {isOpen && (
               <div className="overflow-hidden rounded-lg bg-white shadow">
-                <NewGroupView/>
+                <CreateGroupWizard />
                 </div>
                 )}
             <button
@@ -90,11 +90,13 @@ const CreateGroupWizard = () => {
   const user = useSession().data?.user;
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [location, setLocation] = useState("");
 
   const { mutate, isLoading: isCreatingPost } = api.group.create.useMutation({
     onSuccess: () => {
       setName("");
       setDescription("");
+      setLocation("");
     },
   });
 
@@ -103,9 +105,7 @@ const CreateGroupWizard = () => {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          mutate({ name, description });
-          setName("");
-          setDescription("");
+          mutate({ name, description, location });
         }}
       >
         <label htmlFor="name">Name</label>
@@ -124,6 +124,15 @@ const CreateGroupWizard = () => {
           name="description"
           onChange={(e) => {
             setDescription(e.target.value);
+          }}
+        />
+        <label htmlFor="location">Location</label>
+        <input
+          type="text"
+          id="location"
+          name="location"
+          onChange={(e) => {
+            setLocation(e.target.value);
           }}
         />
 

@@ -22,23 +22,28 @@ model Example {
 }
 
 model Group {
-  id          String     @id @default(cuid())
-  name        String     @default("New Group")
-  description String?
-  destination String?
-  members     User[]
-  Activity    Activity[]
+  id              String         @id @default(cuid())
+  name            String         @default("New Group")
+  description     String?
+  destination     String?
+  location        LatLngLiteral? @relation(fields: [latLngLiteralId], references: [id])
+  members         User[]
+  Activities      Activity[]
+  latLngLiteralId String?
+
+  @@index([latLngLiteralId])
 }
 
 model Activity {
-  id          String  @id @default(cuid())
-  name        String
-  description String?
-  group       Group   @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  groupId     String
-  Vote        Vote[]
+  id      String  @id @default(cuid())
+  group   Group   @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  groupId String
+  place   Place  @relation(fields: [placeId], references: [id], onDelete: Cascade)
+  placeId String
+  Vote    Vote[]
 
   @@index([groupId])
+  @@index([placeId])
 }
 
 model Vote {
@@ -118,4 +123,82 @@ model Chat {
 
   @@index([senderId])
   @@index([receiverId])
+}
+
+// Google Places API
+model Place {
+  id                       String                 @id @default(uuid())
+  placeId                  String?                @unique // id from Google Places API
+  name                     String?
+  location                 LatLngLiteral?         @relation(fields: [latLngLiteralId], references: [id]) // coordinates 
+  json                     Json? // raw json from Google Places API
+  businessStatus           String? // OPERATIONAL, CLOSED_TEMPORARILY, CLOSED_PERMANENTLY
+  editorialSummary         PlaceEditorialSummary?
+  formattedAddress         String? // formatted address : 123 Main St, City, State, Country
+  internationalPhoneNumber String? // +1 123-456-7890
+  openingHours             Json? 
+  permanentlyClosed        Boolean?
+  photos                   PlacePhoto[]
+  priceLevel               Int? // 0 => free, 1 => Inexpensive, 2 => Moderate, 3 => Expensive, 4 => Very Expensive
+  rating                   Float?
+  types                    Type[] // types : [restaurant, food, point_of_interest, establishment]
+  reviews                  PlaceReview[]
+  userRatingsTotal         Int?
+  url                      String? // url to Google Maps
+  vicinity                 String? // vicinity : City, State, Country
+  website                  String?
+  activity                 Activity[]
+  latLngLiteralId          String?
+
+  @@index([latLngLiteralId])
+  @@index([placeId])
+}
+
+model PlaceEditorialSummary {
+  id       String  @id @default(uuid())
+  language String?
+  overview String?
+  place    Place   @relation(fields: [placeId], references: [id], onDelete: Cascade)
+  placeId  String  @unique
+}
+
+model LatLngLiteral {
+  id    String  @id @default(uuid())
+  lat   Float
+  lng   Float
+  Place Place[]
+  Group Group[]
+}
+
+model PlacePhoto {
+  id             String  @id @default(uuid())
+  height         Int
+  photoReference String  @unique
+  width          Int
+  place          Place[]
+}
+
+model PlaceReview {
+  id                      String @id @default(uuid())
+  authorName              String
+  authorPhotoUrl          String
+  authorUrl               String
+  language                String
+  profilePhotoUrl         String
+  rating                  Float
+  relativeTimeDescription String
+  text                    String
+  time                    Int
+  place                   Place  @relation(fields: [placeId], references: [id], onDelete: Cascade)
+  placeId                 String
+
+  @@index([placeId])
+}
+
+model Type {
+  id       String  @id @default(uuid())
+  category String  @unique
+  Place    Place[]
+
+  @@index([category])
 }

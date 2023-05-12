@@ -8,18 +8,19 @@ import {
 
 export const exampleRouter = createTRPCRouter({
   getNewAtivity: publicProcedure
-    .input(z.object({ text: z.string() }))
+    .input(z.object({ groupId: z.string() }))
     .query(({ input }) => {
       return {
-        greeting: `Hello ${input.text}`,
+        greeting: `Hello ${input.groupId}`,
       };
     }),
 
-  likeActivity: publicProcedure.query(({ ctx }) => {
+  likeActivity: protectedProcedure.query(({ ctx }) => {
     return ctx.prisma.example.findMany();
   }),
 
-  getSecretMessage: protectedProcedure.query(() => {
+  dislikeActivity: protectedProcedure.query(() => {
     return "you can now see this secret message!";
   }),
+
 });
