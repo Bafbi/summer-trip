@@ -1,84 +1,78 @@
 import { useState } from "react";
+import Head from "next/head";
 import Link from "next/link";
 import React from "react";
-
+import { FaHeart, FaComment, FaCalendar } from 'react-icons/fa';
+import Header from "~/components/header";
 
 const MobilePage = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [activePage, setActivePage] = useState("coeur");
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
+  const handlePageChange = (page: React.SetStateAction<string>) => {
+    setActivePage(page);
   };
+
+  let content = null;
+
+  // Page Coeur (page par défaut)
+  if (activePage === "coeur") {
+    content = (
+      <div>
+        <h2 className="text-center">Contenu de la page Coeur</h2>
+      </div>
+    );
+      // Page de Chat
+  } else if (activePage === "chat") {
+    content = (
+      <div>
+        <h2 className="text-center">Contenu de la page Chat</h2>
+      </div>
+    );
+      // Page du Calendrier
+  } else if (activePage === "calendrier") {
+    content = (
+      <div>
+        <h2 className="text-center">Contenu de la page Calendrier</h2>
+      </div>
+    );
+  }
 
   return (
     <>
+      <Head>
+        <title>Your Trip</title>
+      </Head>
+
       <div className="flex flex-col h-screen">
         {/* Header */}
-        <header className="flex justify-between items-center h-16 bg-teal-900 text-amber-500 px-4">
-          <button
-            className="text-amber-500 hover:text-gray-300 focus:outline-none"
-            onClick={() => console.log("back")}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fillRule="evenodd"
-                d="M11.707 5.293a1 1 0 00-1.414 0L6.586 9.586a1 1 0 000 1.414L10.293 15.707a1 1 0 001.414-1.414L8.414 11H16a1 1 0 100-2H8.414l3.293-3.293a1 1 0 000-1.414z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </button>
-          <h1 className="text-xl font-bold">Séjour Paris</h1>
-          <button
-            className="text-amber-500 hover:text-gray-300 focus:outline-none"
-            onClick={toggleMenu}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              {isMenuOpen ? (
-                <path
-                  fillRule="evenodd"
-                  d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 6a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 6a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-                  clipRule="evenodd"
-                />
-              ) : (
-                <path
-                  fillRule="evenodd"
-                  d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 6a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 6a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-                  clipRule="evenodd"
-                />
-              )}
-            </svg>
-          </button>
-        </header>
+        {/* // Affiche le header commun à toutes les pages, hormis la page de groupe g */}
+        <Header />
+
         {/* Content */}
-        <main className="flex-grow bg-teal-500 px-4 py-8">
-          <h2 className="text-lg font-semibold mb-4 text-amber-400">Contenue de la page</h2>
+        <main className="flex-grow bg-[#405340] px-4 py-8 h-full overflow-y-auto">
+          {content}
         </main>
-      </div>
-      
-      <div>
-        <footer className="fixed bottom-0 left-0 right-0 bg-teal-900 text-amber-500">
-          <div className="flex justify-between items-center py-2 px-4">
-            <button className="flex items-center space-x-1">
-              {/* <HeartIcon /> */}
-              <span>Like</span>
+
+        {/* Footer */}
+        <footer className="fixed bottom-0 left-0 pt-0 right-0 bg-[#1E5552] text-[#E49A0A]">
+          <div className="flex justify-between  items-center py-2 px-4">
+            <button className={`${
+                activePage === "coeur" ? "bg-[#E49A0A]" : ""
+              } py-2 px-4 rounded-full`}
+              onClick={() => handlePageChange("coeur")}>
+              <FaHeart className="h-12 w-12" />
             </button>
-            <button className="flex items-center space-x-1">
-              {/* <MessageIcon /> */}
-              <span>Comment</span>
+            <button className={`${
+                activePage === "chat" ? "bg-[#E49A0A]" : ""
+              } py-2 px-4 rounded-full`}
+              onClick={() => handlePageChange("chat")}>
+              <FaComment className="h-12 w-12" />
             </button>
-            <button className="flex items-center space-x-1">
-              {/* <CalendarIcon /> */}
-              <span>Calendar</span>
+            <button className={`${
+                activePage === "calendrier" ? "bg-[#E49A0A]" : ""
+              } py-2 px-4 rounded-full`}
+              onClick={() => handlePageChange("calendrier")}>
+              <FaCalendar className="h-12 w-12" />
             </button>
           </div>
         </footer>

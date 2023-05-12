@@ -6,31 +6,45 @@ import { useSession, signOut } from "next-auth/react";
 import { api } from "~/utils/api";
 
 export const DropdownMenu = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
   return (
     (
-      <div className="fixed right-0 top-10 w-48 bg-[#1CCDB3] rounded-md shadow-lg">
-        <Link href="/profile">
-          <span className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900">
-            Profile
-          </span>
-        </Link>
-        <Link href="/settings">
-          <span className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900">
-            Settings
-          </span>
-        </Link>
-        <Link href="/help">
-          <span className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900">
-            Help
-          </span>
-        </Link>
-        <button
-          className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-          onClick={() => void signOut({redirect: true, callbackUrl: '/'})}
+      <nav
+          className={`${
+            isMenuOpen ? "h-44" : "h-0"
+          } overflow-hidden bg-[#1E5552] text-[#E49A0A] transition-height ease-in-out duration-500`}
         >
-          Sign out
-        </button>
-      </div>
+          <ul className="flex flex-col items-center justify-evenly h-full">
+            <li>
+                <Link href="/profile">
+                  <span className="block px-4 py-2 text-lg font-semibold
+                  text-[#E49A0A] hover:bg-gray-100 hover:text-gray-900">
+                    Profile
+                  </span>
+              </Link>
+            </li> 
+            <li>
+              <Link href="/settings">
+                <span className="block px-4 py-2 text-lg font-semibold
+                text-[#E49A0A] hover:bg-gray-100 hover:text-gray-900">
+                  Settings
+                </span>
+              </Link>
+            </li>
+            <li>
+              <button
+                className="block w-full text-left px-4 py-2 text-lg text-[#E49A0A] font-semibold hover:bg-gray-100 hover:text-gray-900"
+                onClick={() => void signOut({redirect: true, callbackUrl: '/'})}
+              >
+                Sign out
+              </button>
+            </li>
+          </ul>
+        </nav>
     )
   );
 };

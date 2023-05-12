@@ -64,8 +64,8 @@ const GroupsPage: NextPage = () => {
                 className="rounded-full w-fit h-fit"
                 src={sessionData.user.image}
                 alt="User Logo"
-                width={64}
-                height={64}
+                width={40}
+                height={40}
               />
             ) : (
               "Sign in"
