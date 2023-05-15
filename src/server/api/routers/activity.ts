@@ -15,12 +15,24 @@ export const exampleRouter = createTRPCRouter({
       };
     }),
 
-  likeActivity: protectedProcedure.query(({ ctx }) => {
-    return ctx.prisma.example.findMany();
-  }),
-
-  dislikeActivity: protectedProcedure.query(() => {
-    return "you can now see this secret message!";
-  }),
+  rateActivity: protectedProcedure
+    .input(z.object({ activityId: z.string(), rating: z.number() }))
+    .mutation(({ input, ctx }) => {
+      return ctx.prisma.vote.create({
+        data: {
+          activity: {
+            connect: {
+              id: input.activityId,
+            },
+          },
+          user: {
+            connect: {
+              id: ctx.session?.user?.id,
+            },
+          },
+          vote: input.rating,
+        },
+      });
+    }),
 
 });
