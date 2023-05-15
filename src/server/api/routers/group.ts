@@ -1,10 +1,3 @@
-import {
-  PlacePhoto,
-  type AddressType,
-  OpeningHours,
-  PlaceData,
-} from "@googlemaps/google-maps-services-js";
-import { writeFile } from "fs";
 import { z } from "zod";
 
 import { env } from "~/env.mjs";
@@ -52,12 +45,6 @@ export const groupRouter = createTRPCRouter({
         },
       });
 
-      // writeFile("/coordinates.json", JSON.stringify(coordinates), (err) => {
-      //   if (err) {
-      //     console.log(err);
-      //   }
-      // });
-
       if (coordinates.data.status !== "OK") {
         throw new Error("City not found");
       }
@@ -88,136 +75,74 @@ export const groupRouter = createTRPCRouter({
         `${coordinates.data.results[0]?.geometry.location.lat},${coordinates.data.results[0]?.geometry.location.lng}`
       );
 
-      // writeFile("/near.jsontest", JSON.stringify(activities), (err) => {
-      //   if (err) {
-      //     console.log(err);
-      //   }
-      // });
+      activities.map(async (activity) => {
+        if (!activity.types) return;
+        if (!activity.geometry) return;
+        if (!activity.photos) return;
+        if (!activity.photos[0]) return;
 
-      const places = activities.map((a) => {
-        if (!a) {
-          throw new Error("Activity not found");
-        }
-        if (!a.geometry) {
-          throw new Error("Activity not found");
-        }
+        const types = await prisma.$transaction(
+          activity.types.map((type) => {
+            return prisma.type.upsert({
+              where: {
+                category: type.toString(),
+              },
+              create: {
+                category: type.toString(),
+              },
+              update: {
+                category: type.toString(),
+              },
+            });
+          })
+        );
 
-        if (!a.types) {
-          throw new Error("Activity not found");
-        }
-
-        const types = a.types?.map((type) => {
-          return {
-            category: type.toString(),
-          };
-        });
-
-        if (!a.photos) {
-          throw new Error("Activity not found");
-        }
-        if (!a.photos[0]) {
-          throw new Error("Activity not found");
-        }
-        const photo = a.photos[0];
-
-        return {
-          placeId: a.place_id,
-          name: a.name,
-          location: {
-            create: {
-              lat: a.geometry.location.lat,
-              lng: a.geometry.location.lng,
-            },
-          },
-          businessStatus: a.business_status,
-          formattedAddress: a.formatted_address,
-          internationalPhoneNumber: a.international_phone_number,
-          rating: a.rating,
-          userRatingsTotal: a.user_ratings_total,
-          priceLevel: a.price_level,
-          types: {
-            createMany: {
-              data: types,
-            },
-          },
-          photos: {
-            create: {
-              photoReference: photo.photo_reference,
-              height: photo.height,
-              width: photo.width,
-            },
-          },
-          activity: {
-            create: {
-              group: {
-                connect: {
-                  id: group.id,
-                },
+        await ctx.prisma.place.create({
+          data: {
+            placeId: activity.place_id,
+            name: activity.name,
+            vicinity: activity.vicinity,
+            businessStatus: activity.business_status,
+            rating: activity.rating,
+            userRatingsTotal: activity.user_ratings_total,
+            priceLevel: activity.price_level,
+            formattedAddress: activity.formatted_address,
+            internationalPhoneNumber: activity.international_phone_number,
+            website: activity.website,
+            url: activity.url,
+            json: JSON.stringify(activity),
+            location: {
+              create: {
+                lat: activity.geometry.location.lat,
+                lng: activity.geometry.location.lng,
               },
             },
+            types: {
+              connect: types.map((type) => {
+                return { id: type.id };
+              }),
+            },
+            photos: {
+              create: {
+                photoReference: activity.photos[0]?.photo_reference,
+                height: activity.photos[0]?.height,
+                width: activity.photos[0]?.width,
+              },
+            },
+            activity: {
+              create: {
+                group: {
+                  connect: {
+                    id: group.id,
+                  },
+                },
+              },
+            },       
           },
-          json: JSON.stringify(a),
-        };
-      });
-
-      await prisma.place.createMany({
-        data: places,
-        skipDuplicates: true,
+        });
       });
     }),
 });
-
-const createTypesRows = (placeId: string, types: AddressType[]) => {
-  const typesData = types.map((type) => {
-    return {
-      category: type.toString(),
-      place: {
-        connect: {
-          placeId: placeId,
-        },
-      },
-    };
-  });
-  return prisma.type.createMany({
-    data: typesData,
-    skipDuplicates: true,
-  });
-};
-
-const createPhotosRows = (photos: {data: PlacePhoto[], placeId: string}[]) => {
-  // convert photos array to array of objects with placeId and photoData
-  const photosData = photos.map(({data, placeId}) => {
-    
-  
-
-  const photosData = photos.map(({data, placeId}) => {
-
-    return {
-      photoReference: data.photo_reference,
-      height: data.height,
-      width: photo.width,
-      place: {
-        connect: {
-          placeId: placeId,
-        },
-      },
-    };
-  });
-  return prisma.placePhoto.createMany({
-    data: photosData,
-    skipDuplicates: true,
-  });
-};
-
-const createPlaceRow = (places: Partial<PlaceData>[]) => {
-  const placesData = places.map((place) => {
-    return {
-      placeId: place.place_id,
-      name: place.name,
-
-
-
-
 
 // get activity by location with google place api
 const findNewActivities = async (location: string) => {

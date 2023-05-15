@@ -35,8 +35,8 @@ model Group {
 }
 
 model Activity {
-  id      String  @id @default(cuid())
-  group   Group   @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  id      String @id @default(cuid())
+  group   Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
   groupId String
   place   Place  @relation(fields: [placeId], references: [id], onDelete: Cascade)
   placeId String
@@ -136,7 +136,7 @@ model Place {
   editorialSummary         PlaceEditorialSummary?
   formattedAddress         String? // formatted address : 123 Main St, City, State, Country
   internationalPhoneNumber String? // +1 123-456-7890
-  openingHours             Json? 
+  openingHours             Json?
   permanentlyClosed        Boolean?
   photos                   PlacePhoto[]
   priceLevel               Int? // 0 => free, 1 => Inexpensive, 2 => Moderate, 3 => Expensive, 4 => Very Expensive
@@ -198,7 +198,7 @@ model PlaceReview {
 model Type {
   id       String  @id @default(uuid())
   category String  @unique
-  Place    Place[]
+  place    Place[]
 
   @@index([category])
 }
