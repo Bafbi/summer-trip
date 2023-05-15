@@ -7,6 +7,8 @@ import { useRouter } from "next/router";
 import { DropdownMenu } from "~/components/menu";
 import { useState } from "react";
 import Image from "next/image";
+import DropMenu from "~/components/dropMenu";
+import Header from "~/components/header";
 
 const GroupsPage: NextPage = () => {
   const { data: sessionData } = useSession({ required: true });
@@ -20,11 +22,19 @@ const GroupsPage: NextPage = () => {
     // router.push(""); // Redirige vers la page de connexion après déconnexion
   };
 
+
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
+
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
 
   if (groupsLoading) return <div>Loading...</div>;
   if (!groupsData) return <div>Something went wrong</div>;
@@ -35,43 +45,44 @@ const GroupsPage: NextPage = () => {
         <title>Groups</title>
       </Head>
 
-      <header className="flex items-center bg-[#1E5552] w-screen p-2 justify-between min-h-fit">
-        <button className="">
-        {sessionData?.user.image ? (
-              <Image
-                className="rounded-full w-fit h-fit"
-                src={"/judog.PNG"}
-                alt="User Logo"
-                width={64}
-                height={64}
-              />
-            ) : (
-              "Sign in"
-            )} 
+      <header className="">
+        <div className="flex h-16 items-center justify-between bg-[#1E5552] px-4 text-[#E49A0A]">
+            <button className="">
+            {sessionData?.user.image ? (
+                  <Image
+                    className="rounded-full w-fit h-fit"
+                    src={"/judog.PNG"}
+                    alt="User Logo"
+                    width={64}
+                    height={64}
+                  />
+                ) : (
+                  "Sign in"
+                )} 
 
-        </button>
-        <h1 className="flex text-[#E49A0A] font-bold text-xl">
-          {sessionData?.user?.name}
-        </h1>
-        
-        <button
-        
-          className="w-fit h-fit"
-          onClick={toggleDropdown}
-        >
-          {sessionData?.user.image ? (
-              <Image
-                className="rounded-full w-fit h-fit"
-                src={sessionData.user.image}
-                alt="User Logo"
-                width={40}
-                height={40}
-              />
-            ) : (
-              "Sign in"
-            )}
-        </button>
-        {isDropdownOpen && <DropdownMenu />}
+            </button>
+            <h1 className="flex text-[#E49A0A] font-bold text-xl">
+              {sessionData?.user?.name}
+            </h1>
+            
+            <button
+              className="w-fit h-fit"
+              onClick={toggleMenu}
+            >
+              {sessionData?.user.image ? (
+                  <Image
+                    className="rounded-full w-fit h-fit"
+                    src={sessionData.user.image}
+                    alt="User Logo"
+                    width={40}
+                    height={40}
+                  />
+                ) : (
+                  "Sign in"
+                )}
+            </button>
+          </div>
+          <DropMenu isOpen={isMenuOpen} />
       </header>
 
       <main className="min-h-screen bg-[#40534D]">

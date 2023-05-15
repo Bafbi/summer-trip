@@ -18,7 +18,7 @@ const DropMenu = (props:{isOpen:boolean}) => {
       >
         <ul className="flex h-full flex-col items-center justify-evenly">
           <li>
-            <Link href="/profile">
+            <Link href="/p">
               <span
                 className="block px-4 py-2 text-lg font-semibold
                   text-[#E49A0A] hover:bg-gray-100 hover:text-gray-900"
