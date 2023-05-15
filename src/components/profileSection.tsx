@@ -9,7 +9,7 @@ import { useRouter } from "next/router";
 import Image from "next/image";
 
 
-const Profile = (props: { username: any; email: any; groupCount: any; messageCount: any; profileImageUrl: any; }) => {
+const Profile = () => {
 
   let content = null;
 
