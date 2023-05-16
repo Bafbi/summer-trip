@@ -7,7 +7,13 @@ import { date } from "zod";
 import Header from "~/components/layout/header";
 import { api } from "~/utils/api";
 
+import "react-big-calendar/lib/css/react-big-calendar.css"
+
 const ChatComponent = dynamic(() => import("~/components/chatview"), {
+  ssr: false,
+  loading: () => <div>Loading...</div>,
+});
+const PlanningComponent = dynamic(() => import("~/components/planningview"), {
   ssr: false,
   loading: () => <div>Loading...</div>,
 });
@@ -43,7 +49,7 @@ const GroupPage: NextPage = () => {
       </Head>
       <Header />
       <main>
-        <ChatComponent groupId={groupData.name} />
+        <PlanningComponent groupId={groupData.name} />
       </main>
       <footer>
         <button className="h-12 w-12" onClick={() => setSelectedPage("like")}>

@@ -3,7 +3,7 @@ import { env } from "~/env.mjs";
 import { map } from "@trpc/server/observable";
 
 // get activity by location with google place api
-export const findNewActivities = async (coordinates: {lat: number, lng:number}) => {
+export const findNewActivities = async (coordinates: {lat: number, lng: number}) => {
 
   const activity = await maps.placesNearby({
     params: {
