@@ -1,7 +1,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import React from "react";
-import { DropdownMenu } from "~/components/menu";
 import Head from "next/head";
 import { useSession, signOut } from "next-auth/react";
 import { api } from "~/utils/api";
@@ -14,7 +13,8 @@ const DropMenu = (props:{isOpen:boolean}) => {
       <nav
         className={`${
           props.isOpen ? "h-52" : "h-0"
-        } transition-height absolute w-screen overflow-hidden bg-[#1E5552] text-[#E49A0A] duration-500 ease-in-out`}
+        } transition-height absolute w-screen overflow-hidden bg-[#1E5552]
+          z-10 text-[#E49A0A] duration-500 ease-in-out`}
       >
         <ul className="flex h-full flex-col items-center justify-evenly">
           <li>

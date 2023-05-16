@@ -1,7 +1,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import React from "react";
-import { DropdownMenu } from "~/components/menu";
 import Head from "next/head";
 import { useSession, signOut } from "next-auth/react";
 import { api } from "~/utils/api";

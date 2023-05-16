@@ -26,8 +26,9 @@ const ProfilePage = () => {
         {/* // Affiche le header commun à toutes les pages, hormis la page de groupe g */}
         <Header />
         {/* Content */}
-        <main className="flex-grow bg-[#405340] px-4 py-8 h-full overflow-y-auto">
+        <main className="flex-grow bg-[#405340] px-4 py-8 h-full overflow-hidden">
           <Profile />
+          {/*Voir "profileSection.tsx" */}
         </main>
       </div>
     </>

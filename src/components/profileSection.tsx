@@ -19,7 +19,7 @@ const Profile = () => {
 
   return (
     <div className="profile-container center text-center">
-      <div className="sticky w-28 h-28 m-auto z-10">
+      <div className="sticky w-28 h-24 m-auto z-0">
               {sessionData?.user.image ? (
                           <Image
                             className=" z-0 rounded-full w-fit h-fit"
@@ -46,7 +46,7 @@ const Profile = () => {
       </div>
       <div className="message-count mt-4">
         <p className="text-[#E49A0A] font-semibold ">Number of messages sent :</p>
-        <p className="text-center text-[#1CCDB3]">12</p>
+        <p className="text-center text-[#1CCDB3] mt-4">12</p>
       </div>
       <button className="bg-[#1CCDB3] text-white px-4 py-2 rounded-md mt-8"
         onClick={() => void signOut({redirect: true, callbackUrl: '/'})}>
