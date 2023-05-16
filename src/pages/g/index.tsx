@@ -76,7 +76,7 @@ const GroupsPage: NextPage = () => {
           <button className="">
             {sessionData?.user.image ? (
               <Image
-                className="rounded-full w-fit h-fit"
+                className="h-fit w-fit rounded-full"
                 src={"/judog.PNG"}
                 alt="User Logo"
                 width={64}
@@ -86,14 +86,14 @@ const GroupsPage: NextPage = () => {
               "Sign in"
             )}
           </button>
-          <h1 className="flex text-[#E49A0A] font-bold text-xl">
+          <h1 className="flex text-xl font-bold text-[#E49A0A]">
             {sessionData?.user?.name}
           </h1>
 
-          <button className="w-fit h-fit" onClick={toggleMenu}>
+          <button className="h-fit w-fit" onClick={toggleMenu}>
             {sessionData?.user.image ? (
               <Image
-                className="rounded-full w-fit h-fit"
+                className="h-fit w-fit rounded-full"
                 src={sessionData.user.image}
                 alt="User Logo"
                 width={40}
@@ -107,93 +107,98 @@ const GroupsPage: NextPage = () => {
         <DropMenu isOpen={isMenuOpen} />
       </header>
 
-      <main className="min-h-screen bg-[#40534D] flex flex-col">
-{showForm ? (
-<div className="flex flex-col items-center justify-center gap-2 rounded-lg bg-white p-4 md:p-6 w-full">
-<form onSubmit={handleSubmit} className="w-full">
-<div className="mb-4">
-<label
-               htmlFor="groupName"
-               className="block text-gray-700 text-sm font-bold mb-2"
-             >
-Group Name
-</label>
-<input
-type="text"
-id="groupName"
-className="w-full px-3 py-2 border border-gray-300 rounded-md"
-value={groupName}
-onChange={(e) => setGroupName(e.target.value)}
-required
-/>
-</div>
-<div className="mb-4">
-<label
-               htmlFor="groupDescription"
-               className="block text-gray-700 text-sm font-bold mb-2"
-             >
-Group Description
-</label>
-<textarea
-id="groupDescription"
-className="w-full px-3 py-2 border border-gray-300 rounded-md"
-value={groupDescription}
-onChange={(e) => setGroupDescription(e.target.value)}
-required
-/>
-</div>
-<div className="flex justify-end">
-<button
-               type="submit"
-               className="bg-blue-500 text-white px-4 py-2 rounded-md mr-2"
-             >
-Create
-</button>
-<button
-               type="button"
-               className="bg-gray-500 text-white px-4 py-2 rounded-md"
-               onClick={handleCancel}
-             >
-Cancel
-</button>
-</div>
-</form>
-</div>
-) : (
-<div className="grid grid-cols-2 md:grid-cols-2 gap-6 p-4">
-<div
-onClick={toggleExpansion}
-className={'flex flex-col items-center justify-center gap-2 rounded-lg bg-white p-4 md:p-6 ${ isExpanded ? "md:col-span-2 w-full" : "" } cursor-pointer'}
->
-{isExpanded ? (
-<div>
-<img src="/minus.png" alt="Close Form" className="h-9 w-9" />
-<h1 className="mt-2 text-xs">Close Form</h1>
-</div>
-) : (
-<div>
-<img src="/plus.png" alt="Add Group" className="h-9 w-9" />
-<h1 className="mt-2 text-xs">Create Group</h1>
-</div>
-)}
-</div>
-{groupsData.map((group) => {
-return (
-<Link key={group.id} href={'/g/${group.id}'}>
-<div className="flex flex-col items-center justify-center gap-2 rounded-lg bg-white px-2 p-4">
-<div className="flex h-full flex-col items-center justify-end">
-<div className="h-8 w-8 rounded-full bg-[#1CCDB3]"></div>
-<h1 className="mt-2 text-xs">{group.id}</h1>
-</div>
-</div>
-</Link>
-);
-})}
-</div>
-)}
-</main>
-</>
-);
+      <main className="flex min-h-screen flex-col bg-[#40534D]">
+        {showForm ? (
+          <div className="flex w-full flex-col items-center justify-center gap-2 rounded-lg bg-white p-4 md:p-6">
+            <form onSubmit={handleSubmit} className="w-full">
+              <div className="mb-4">
+                <label
+                  htmlFor="groupName"
+                  className="mb-2 block text-sm font-bold text-gray-700"
+                >
+                  Group Name
+                </label>
+                <input
+                  type="text"
+                  id="groupName"
+                  className="w-full rounded-md border border-gray-300 px-3 py-2"
+                  value={groupName}
+                  onChange={(e) => setGroupName(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label
+                  htmlFor="groupDescription"
+                  className="mb-2 block text-sm font-bold text-gray-700"
+                >
+                  Group Description
+                </label>
+                <textarea
+                  id="groupDescription"
+                  className="w-full rounded-md border border-gray-300 px-3 py-2"
+                  value={groupDescription}
+                  onChange={(e) => setGroupDescription(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="flex justify-end">
+                <button
+                  type="submit"
+                  className="mr-2 rounded-md bg-blue-500 px-4 py-2 text-white"
+                >
+                  Create
+                </button>
+                <button
+                  type="button"
+                  className="rounded-md bg-gray-500 px-4 py-2 text-white"
+                  onClick={handleCancel}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-6 p-4 md:grid-cols-2">
+            <div
+              onClick={toggleExpansion}
+              className={`${
+                isExpanded ? "w-full md:col-span-2" : ""
+              } flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg bg-white p-4 md:p-6`}
+            >
+              {isExpanded ? (
+                <div>
+                  <img src="/minus.png" alt="Close Form" className="h-9 w-9" />
+                  <h1 className="mt-2 text-xs">Close Form</h1>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center">
+                  {" "}
+                  {/* Ajout des classes CSS "flex flex-col items-center" */}
+                  <img src="/plus.png" alt="Add Group" className="h-9 w-9" />
+                  <h1 className="mt-2 text-xs">Create Group</h1>
+                </div>
+              )}
+            </div>
+
+            {groupsData.map((group) => {
+              return (
+                <Link key={group.id} href={"/g/${group.id}"}>
+                  <div className="flex flex-col items-center justify-center gap-2 rounded-lg bg-white p-4 px-2">
+                    <div className="flex h-full flex-col items-center justify-end">
+                      <div className="h-8 w-8 rounded-full bg-[#1CCDB3]"></div>
+                      <h1 className="mt-2 text-xs">{group.id}</h1>
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        )}
+      </main>
+    </>
+  );
 };
 
 export default GroupsPage;
