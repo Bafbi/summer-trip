@@ -24,9 +24,32 @@ const GroupsPage: NextPage = () => {
 
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [showForm, setShowForm] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [groupName, setGroupName] = useState('');
+  const [groupDescription, setGroupDescription] = useState('');
+
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
+    setShowForm(false);
+  };
+
+  const toggleExpansion = () => {
+    setIsExpanded(!isExpanded);
+    setShowForm(true);
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    // Vérifier si les champs du formulaire sont valides
+
+    // Effectuer une action pour créer le groupe en utilisant les valeurs de groupName et groupDescription
+
+    // Réinitialiser les valeurs des champs du formulaire
+    setGroupName('');
+    setGroupDescription('');
   };
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -85,18 +108,55 @@ const GroupsPage: NextPage = () => {
           <DropMenu isOpen={isMenuOpen} />
       </header>
 
-      <main className="min-h-screen bg-[#40534D]">
-        <div className=" grid grid-cols-2 gap-6 p-4">
-          <Link href="/create-group">
-            <div className=" flex flex-col items-center justify-center gap-2 rounded-lg bg-[white] px-2 p-4">
-              <div className="flex h-full flex-col items-center justify-end">
-                <img src="/plus.png" alt="Add Group" className="h-9 w-9 " />
-                <h1 className="mt-2 text-xs ">  
-                  Create Group
-                </h1>
-              </div>
-            </div>
-          </Link>
+  <main className="min-h-screen bg-[#40534D] flex flex-col">
+  <div className="grid grid-cols-2 md:grid-cols-2 gap-6 p-4">
+    <div
+  onClick={toggleExpansion}
+  className={`flex flex-col items-center justify-center gap-2 rounded-lg bg-white p-4 md:p-6 ${
+    isExpanded ? "md:col-span-2 w-full" : ""
+  } cursor-pointer`}
+>
+      {isExpanded ? (
+        <form onSubmit={handleSubmit} className="w-full">
+          <div className="mb-4">
+            <label htmlFor="groupName" className="block text-gray-700 text-sm font-bold mb-2">
+              Group Name
+            </label>
+            <input
+              type="text"
+              id="groupName"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              value={groupName}
+              onChange={(e) => setGroupName(e.target.value)}
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label htmlFor="groupDescription" className="block text-gray-700 text-sm font-bold mb-2">
+              Group Description
+            </label>
+            <textarea
+              id="groupDescription"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              value={groupDescription}
+              onChange={(e) => setGroupDescription(e.target.value)}
+              required
+            />
+          </div>
+          <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded-md">
+            Créer
+          </button>
+        </form>
+      ) : (
+        <div>
+          {<div>
+  <img src="/plus.png" alt="Add Group" className="h-9 w-9" />
+  <h1 className="mt-2 text-xs">Create Group</h1>
+</div>
+}
+        </div>
+      )}
+    </div>
           {groupsData.map((group) => {
             return (
               <Link key={group.id} href={`/g/${group.id}`}>
