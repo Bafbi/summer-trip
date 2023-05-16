@@ -4,6 +4,7 @@ import Link from "next/link";
 import React from "react";
 import { FaHeart, FaComment, FaCalendar } from 'react-icons/fa';
 import Header from "~/components/header";
+import CoeurPageContent from "~/components/likeContent";
 
 const MobilePage = () => {
   const [activePage, setActivePage] = useState("coeur");
@@ -18,7 +19,7 @@ const MobilePage = () => {
   if (activePage === "coeur") {
     content = (
       <div>
-        <h2 className="text-center">Contenu de la page Coeur</h2>
+        <CoeurPageContent />;
       </div>
     );
       // Page de Chat
@@ -56,22 +57,30 @@ const MobilePage = () => {
         {/* Footer */}
         <footer className="fixed bottom-0 left-0 pt-0 right-0 bg-[#1E5552] text-[#E49A0A]">
           <div className="flex justify-between  items-center py-2 px-4">
-            <button className={`${
-                activePage === "coeur" ? "bg-[#E49A0A]" : ""
+            <button
+              className={`${
+                activePage === "coeur" ? "bg-[#E49A0A] text-[#1E5552]" : ""
               } py-2 px-4 rounded-full`}
-              onClick={() => handlePageChange("coeur")}>
+              onClick={() => handlePageChange("coeur")}
+            >
               <FaHeart className="h-12 w-12" />
             </button>
-            <button className={`${
-                activePage === "chat" ? "bg-[#E49A0A]" : ""
+            <span className="h-12 w-0.5 bg-[#E49A0A] mx-2"></span>
+            <button
+              className={`${
+                activePage === "chat" ? "bg-[#E49A0A] text-[#1E5552]" : ""
               } py-2 px-4 rounded-full`}
-              onClick={() => handlePageChange("chat")}>
+              onClick={() => handlePageChange("chat")}
+            >
               <FaComment className="h-12 w-12" />
             </button>
-            <button className={`${
-                activePage === "calendrier" ? "bg-[#E49A0A]" : ""
+            <span className="h-12 w-0.5 bg-[#E49A0A] mx-2"></span>
+            <button
+              className={`${
+                activePage === "calendrier" ? "bg-[#E49A0A] text-[#1E5552]" : ""
               } py-2 px-4 rounded-full`}
-              onClick={() => handlePageChange("calendrier")}>
+              onClick={() => handlePageChange("calendrier")}
+            >
               <FaCalendar className="h-12 w-12" />
             </button>
           </div>
