@@ -3,6 +3,7 @@ import dynamic from "next/dynamic";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { date } from "zod";
 import Header from "~/components/layout/header";
 import { api } from "~/utils/api";
 
@@ -42,7 +43,7 @@ const GroupPage: NextPage = () => {
       </Head>
       <Header />
       <main>
-        <ChatComponent groupId={id} />
+        <ChatComponent groupId={groupData.name} />
       </main>
       <footer>
         <button className="h-12 w-12" onClick={() => setSelectedPage("like")}>

@@ -1,10 +1,11 @@
+import { Prisma } from "@prisma/client";
 import { z } from "zod";
 
 import { env } from "~/env.mjs";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { prisma } from "~/server/db";
-import { maps } from "~/server/map";
+import { findNewActivities, getLocation } from "../../utils/place";
 
 export const groupRouter = createTRPCRouter({
   getAll: protectedProcedure.query(({ ctx }) => {
@@ -38,19 +39,7 @@ export const groupRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      const coordinates = await maps.geocode({
-        params: {
-          address: input.location,
-          key: env.GOOGLE_PLACES_API_KEY,
-        },
-      });
-
-      if (coordinates.data.status !== "OK") {
-        throw new Error("City not found");
-      }
-      if (!coordinates.data.results[0]) {
-        throw new Error("City not found");
-      }
+      const coordinates = await getLocation(input.location);
 
       const group = await ctx.prisma.group.create({
         data: {
@@ -59,8 +48,8 @@ export const groupRouter = createTRPCRouter({
           destination: input.location,
           location: {
             create: {
-              lat: coordinates.data.results[0]?.geometry.location.lat,
-              lng: coordinates.data.results[0]?.geometry.location.lng,
+              lat: coordinates.lat,
+              lng: coordinates.lng,
             },
           },
           members: {
@@ -71,9 +60,7 @@ export const groupRouter = createTRPCRouter({
         },
       });
 
-      const activities = await findNewActivities(
-        `${coordinates.data.results[0]?.geometry.location.lat},${coordinates.data.results[0]?.geometry.location.lng}`
-      );
+      const activities = await findNewActivities(coordinates);
 
       activities.map(async (activity) => {
         if (!activity.types) return;
@@ -110,7 +97,9 @@ export const groupRouter = createTRPCRouter({
             internationalPhoneNumber: activity.international_phone_number,
             website: activity.website,
             url: activity.url,
-            json: JSON.stringify(activity),
+            openingHours:
+              activity.opening_hours as unknown as Prisma.JsonObject,
+            json: activity as unknown as Prisma.JsonObject,
             location: {
               create: {
                 lat: activity.geometry.location.lat,
@@ -124,6 +113,7 @@ export const groupRouter = createTRPCRouter({
             },
             photos: {
               create: {
+                main: true,
                 photoReference: activity.photos[0]?.photo_reference,
                 height: activity.photos[0]?.height,
                 width: activity.photos[0]?.width,
@@ -137,42 +127,9 @@ export const groupRouter = createTRPCRouter({
                   },
                 },
               },
-            },       
+            },
           },
         });
       });
     }),
 });
-
-// get activity by location with google place api
-const findNewActivities = async (location: string) => {
-  const cityCode = await maps.geocode({
-    params: {
-      address: location,
-      key: env.GOOGLE_PLACES_API_KEY,
-    },
-  });
-
-  if (cityCode.data.status !== "OK") {
-    throw new Error("City not found");
-  }
-  if (!cityCode.data.results[0]) {
-    throw new Error("City not found");
-  }
-  const { lat, lng } = cityCode.data.results[0].geometry.location;
-
-  const activity = await maps.placesNearby({
-    params: {
-      location: `${lat},${lng}`,
-      radius: 10000,
-      type: "tourist_attraction",
-      key: env.GOOGLE_PLACES_API_KEY,
-    },
-  });
-
-  if (activity.data.status !== "OK") {
-    throw new Error("Activity not found");
-  }
-
-  return activity.data.results;
-};
