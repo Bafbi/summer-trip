@@ -116,7 +116,7 @@ const GroupsPage: NextPage = () => {
                   htmlFor="groupName"
                   className="mb-2 block text-sm font-bold text-gray-700"
                 >
-                  Group Name
+                  Nom du Groupe
                 </label>
                 <input
                   type="text"
