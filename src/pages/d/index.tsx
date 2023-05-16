@@ -3,7 +3,7 @@ import Head from "next/head";
 import Link from "next/link";
 import React from "react";
 import { FaTimes, FaUserPlus } from 'react-icons/fa';
-import Header from "~/components/header";
+import Header2 from "~/components/header2";
 
 const GroupMembersPage = () => {
   const [members, setMembers] = useState<string[]>(["John", "Jane", "Bob"]);
@@ -25,7 +25,7 @@ const GroupMembersPage = () => {
 
       <div className="flex flex-col h-screen">
         {/* Header */}
-        <Header />
+        <Header2 />
 
         {/* Content */}
         <main className="flex-grow bg-[#405340] px-4 py-8 h-full overflow-y-auto">

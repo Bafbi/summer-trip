@@ -3,8 +3,9 @@ import Head from "next/head";
 import Link from "next/link";
 import React from "react";
 import { FaHeart, FaComment, FaCalendar } from 'react-icons/fa';
-import Header from "~/components/header";
+import Header2 from "~/components/header2";
 import CoeurPageContent from "~/components/likeContent";
+import ChatPageContent from "~/components/chatContent";
 
 const MobilePage = () => {
   const [activePage, setActivePage] = useState("coeur");
@@ -26,7 +27,7 @@ const MobilePage = () => {
   } else if (activePage === "chat") {
     content = (
       <div>
-        <h2 className="text-center">Contenu de la page Chat</h2>
+        <ChatPageContent />
       </div>
     );
       // Page du Calendrier
@@ -47,7 +48,7 @@ const MobilePage = () => {
       <div className="flex flex-col h-screen">
         {/* Header */}
         {/* // Affiche le header commun à toutes les pages, hormis la page de groupe g */}
-        <Header />
+        <Header2 />
 
         {/* Content */}
         <main className="flex-grow bg-[#405340] px-4 py-8 h-full overflow-y-auto">

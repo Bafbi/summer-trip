@@ -70,7 +70,6 @@ const ProfilePage = () => {
           Sign out
         </button>
       </div>
-          {/*Voir "profileSection.tsx" */}
         </main>
       </div>
     </>

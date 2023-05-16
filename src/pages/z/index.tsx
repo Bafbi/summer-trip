@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import Image from "next/image";
 import DropMenu from "~/components/dropMenu";
-import Header from "~/components/header";
+import Header2 from "~/components/header2";
 
 const ActivitiesPage: NextPage = () => {
   const [activities] = useState([
@@ -28,7 +28,7 @@ const ActivitiesPage: NextPage = () => {
     <div className="flex flex-col h-screen bg-[#40534D]">
       {/* Header */}
       {/* Afficher l'en-tête commun à toutes les pages sauf la page de groupe */}
-      <Header />
+      <Header2 />
 
       <main className="mt-8">
         <div className="grid grid-cols-2 gap-4">
