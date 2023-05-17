@@ -1,5 +1,5 @@
 import { env } from "~/env.mjs";
-import Pusher from "pusher-js";
+import Pusher from "pusher";
 
 const globalForPusher = globalThis as unknown as {
   pusher: Pusher | undefined;
@@ -7,10 +7,11 @@ const globalForPusher = globalThis as unknown as {
 
 export const pusher =
   globalForPusher.pusher ??
-  new Pusher(env.PUSHER_KEY, {
+  new Pusher({
+    appId: env.PUSHER_APP_ID,
+    key: env.PUSHER_KEY,
+    secret: env.PUSHER_SECRET,
     cluster: env.PUSHER_CLUSTER,
-    enabledTransports: ["ws"],
-    forceTLS: true,
   });
 
 if (env.NODE_ENV !== "production") globalForPusher.pusher = pusher;

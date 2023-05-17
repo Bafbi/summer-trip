@@ -28,8 +28,7 @@ export const messageRouter = createTRPCRouter({
           content: input.content,
         },
       });
-      const channel = pusher.subscribe(`chat-${input.groupId}`);
-      channel.trigger('message', input.content);
+      await pusher.trigger(`chat-${input.groupId}`, 'message', input.content);
     }),
 
   getAll: protectedProcedure

@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import Pusher from "pusher-js";
 import { api } from "~/utils/api";
 
-// Mettre les clés pusher dans les variables d'environnement
-const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY || '', {
-  cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER || '',
+import Pusher from "pusher-js";
+import { env } from "~/env.mjs";
+
+const pusher = new Pusher(env.NEXT_PUBLIC_PUSHER_KEY, {
+  cluster: env.NEXT_PUBLIC_PUSHER_CLUSTER,
 });
 
 const ChatView: React.ComponentType<{groupId: string}> = ({ groupId }) => {

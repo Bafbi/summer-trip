@@ -52,7 +52,7 @@ const GroupPage: NextPage<{ groupId: string }> = ({ groupId }) => {
   return (
     <>
       <Head>
-        <title>Summer-Trip{groupLoading ? "" : ` | ${groupData.name}`}</title>
+        <title>{`Summer-Trip${groupLoading ? "" : ` | ${groupData.name}`}`}</title>
       </Head>
 
       <div className="flex h-screen flex-col">
