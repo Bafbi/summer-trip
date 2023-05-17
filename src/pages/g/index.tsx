@@ -70,33 +70,33 @@ const GroupsPage: NextPage = () => {
         <title>Groups</title>
       </Head>
 
-      <header className="">
-        <div className="flex h-16 items-center  bg-[#1E5552] px-0 text-[#E49A0A]">
-          <button className="pl-2 pr-12">
+      <header>
+        <div className="flex h-16 items-center justify-between bg-[#1E5552] text-[#E49A0A]">
+          <button className="px-4 h-full">
             {sessionData?.user.image ? (
               <Image
-                className="h-fit w-fit rounded-full "
+                className="rounded-full object-contain h-14 "
                 src={"/soleilprincip.png"}
                 alt="User Logo"
-                width={55}
-                height={55}
+                width={64}
+                height={64}
               />
             ) : (
               "Sign in"
             )}
           </button>
-          <h1 className="flex text-xl font-bold text-[#E49A0A] p-2">
+          <h1 className="px-2 text-xl font-bold text-[#E49A0A] ">
             {sessionData?.user?.name}
           </h1>
 
-          <button className="h-fit w-fit pl-16" onClick={toggleMenu}>
+          <button className="px-4 h-full" onClick={toggleMenu}>
             {sessionData?.user.image ? (
               <Image
-                className="h-fit w-fit rounded-full"
+                className="rounded-full object-contain h-14 "
                 src={sessionData.user.image}
                 alt="User Logo"
-                width={40}
-                height={40}
+                width={64}
+                height={64}
               />
             ) : (
               "Sign in"
