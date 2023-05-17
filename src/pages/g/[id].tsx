@@ -71,7 +71,7 @@ const GroupPage: NextPage<{ groupId: string }> = ({ groupId }) => {
         </main>
 
         {/* Footer */}
-        <footer className="fixed bottom-0 left-0 right-0 bg-[#1E5552] pt-0 text-[#E49A0A]">
+        <footer className="bg-[#1E5552] pt-0 text-[#E49A0A]">
           <div className="flex items-center  justify-between px-4 py-2">
             <button
               className={`${

@@ -11,26 +11,22 @@ const PlanningView = (props: { groupId: string }) => {
   const { data: groupData, isLoading: groupLoading } =
     api.group.getById.useQuery({ id: groupId });
 
-  return (
-    <div>
-      <div className="flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-        <h1 className="text-5xl font-extrabold tracking-tight sm:text-[5rem]">
-          <Calendar
-            localizer={localizer}
-            events={[
-              {
-                title: "My event",
-                start: new Date(),
-                end: dayjs().add(1, "hour").toDate(),
-              },
-            ]}
-            startAccessor="start"
-            endAccessor="end"
-            style={{ height: 1500 }}
+  const localizer = dayjsLocalizer(dayjs);
 
-          />
-        </h1>
-      </div>
+  return (
+    <div className="h-full">
+        <Calendar
+          localizer={localizer}
+          events={[
+            {
+              title: "My event",
+              start: new Date(),
+              end: dayjs().add(1, "hour").toDate(),
+            },
+          ]}
+          startAccessor="start"
+          endAccessor="end"
+        />
     </div>
   );
 };
