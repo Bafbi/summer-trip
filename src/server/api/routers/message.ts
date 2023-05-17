@@ -12,8 +12,7 @@ export const messageRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-      await ctx.prisma.message.create({
+      const message = await ctx.prisma.chat.create({
         data: {
           group: {
             connect: {
@@ -28,14 +27,13 @@ export const messageRouter = createTRPCRouter({
           content: input.content,
         },
       });
-      await pusher.trigger(`chat-${input.groupId}`, 'message', input.content);
+      await pusher.trigger(`chat-${input.groupId}`, 'message', message.id);
     }),
 
   getAll: protectedProcedure
   .input(z.object({ groupId: z.string() }))
   .query(({ input, ctx }) => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-    return ctx.prisma.message.findMany({
+    return ctx.prisma.chat.findMany({
       where: {
         groupId: input.groupId,
       },
@@ -50,4 +48,24 @@ export const messageRouter = createTRPCRouter({
       },
     });
   }),
+
+  getChatMessage: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(({ input, ctx }) => {
+      return ctx.prisma.chat.findUnique({
+        where: {
+          id: input.id,
+        },
+        select: {
+          content: true,
+          sender: {
+            select: {
+              name: true,
+            },
+          },
+          createdAt: true,
+        },
+      });
+    }
+    ),
 });
