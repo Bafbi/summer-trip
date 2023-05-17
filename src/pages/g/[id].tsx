@@ -2,12 +2,12 @@ import { GetStaticPaths, GetStaticProps, type NextPage } from "next";
 import dynamic from "next/dynamic";
 import Head from "next/head";
 import { useState } from "react";
-import Header from "~/components/header";
 import { api } from "~/utils/api";
 
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { FaHeart, FaComment, FaCalendar } from "react-icons/fa";
 import { useRouter } from "next/router";
+import { AppHeader } from "~/components/header";
 
 const ChatComponent = dynamic(() => import("~/components/chatview"), {
   ssr: false,
@@ -58,7 +58,7 @@ const GroupPage: NextPage<{ groupId: string }> = ({ groupId }) => {
       <div className="flex h-screen flex-col">
         {/* Header */}
         {/* // Affiche le header commun à toutes les pages, hormis la page de groupe g */}
-        <Header
+        <AppHeader
           groupId={groupId}
           groupName={groupLoading ? "..." : groupData.name}
         />

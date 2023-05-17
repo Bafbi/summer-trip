@@ -187,7 +187,7 @@ const GroupsPage: NextPage = () => {
                   <div className="flex flex-col items-center justify-center gap-2 rounded-lg bg-white p-4 px-2">
                     <div className="flex h-full flex-col items-center justify-end">
                       <div className="h-8 w-8 rounded-full bg-[#1CCDB3]"></div>
-                      <h1 className="mt-2 text-xs">{group.id}</h1>
+                      <h1 className="mt-2 text-xs">{group.name}</h1>
                     </div>
                   </div>
                 </Link>
