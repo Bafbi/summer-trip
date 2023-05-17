@@ -5,7 +5,7 @@ import Pusher from "pusher-js";
 import { env } from "~/env.mjs";
 
 const pusher = new Pusher(env.NEXT_PUBLIC_PUSHER_KEY, {
-  cluster: env.NEXT_PUBLIC_PUSHER_CLUSTER,
+  cluster: "eu",
 });
 
 const ChatView: React.ComponentType<{groupId: string}> = ({ groupId }) => {
