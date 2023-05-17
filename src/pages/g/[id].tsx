@@ -1,4 +1,4 @@
-import { GetStaticPaths, GetStaticProps, type NextPage } from "next";
+import { type GetStaticPaths, type GetStaticProps, type NextPage } from "next";
 import dynamic from "next/dynamic";
 import Head from "next/head";
 import { useState } from "react";
@@ -30,15 +30,18 @@ export const getStaticProps: GetStaticProps = (context) => {
       groupId,
     },
   };
-};
+}
 
 export const getStaticPaths: GetStaticPaths = () => {
   return { paths: [], fallback: "blocking" };
-};
+}
+
 
 type PageType = "chat" | "planning" | "activity";
 
-const GroupPage: NextPage<{ groupId: string }> = ({ groupId }) => {
+const AppPage = (props: { groupId: string; } ) => {
+  const { groupId } = props;
+
   const [page, setPage] = useState<PageType>("chat");
 
   const router = useRouter();
@@ -106,4 +109,4 @@ const GroupPage: NextPage<{ groupId: string }> = ({ groupId }) => {
   );
 };
 
-export default GroupPage;
+export default AppPage;

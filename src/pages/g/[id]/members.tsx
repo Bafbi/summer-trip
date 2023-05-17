@@ -1,11 +1,25 @@
 import { useState } from "react";
 import Head from "next/head";
-import Link from "next/link";
 import React from "react";
-import { FaTimes, FaUserPlus } from 'react-icons/fa';
-import Header from "~/components/header";
+import { FaTimes } from 'react-icons/fa';
+import { AppHeader } from "~/components/header";
+import { type GetStaticProps, type GetStaticPaths, NextPage } from "next";
 
-const GroupMembersPage = () => {
+export const getStaticProps: GetStaticProps = (context) => {
+  const groupId = context.params?.id as string;
+  return {
+    props: {
+      groupId,
+    },
+  };
+}
+
+export const getStaticPaths: GetStaticPaths = () => {
+  return { paths: [], fallback: "blocking" };
+}
+
+const GroupMembersPage: NextPage<{groupId: string}> = ({groupId}) => {
+
   const [members, setMembers] = useState<string[]>(["John", "Jane", "Bob"]);
 
   const removeMember = (member: string) => {
@@ -25,7 +39,10 @@ const GroupMembersPage = () => {
 
       <div className="flex flex-col h-screen">
         {/* Header */}
-        <Header />
+        <AppHeader 
+          groupId={groupId}
+          groupName="Members"
+        />
 
         {/* Content */}
         <main className="flex-grow bg-[#405340] px-4 py-8 h-full overflow-y-auto">
