@@ -15,21 +15,18 @@ datasource db {
   relationMode = "prisma"
 }
 
-model Example {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
 model Group {
   id              String         @id @default(cuid())
   name            String         @default("New Group")
   description     String?
   destination     String?
+  startDate       DateTime?
+  endDate         DateTime?
   location        LatLngLiteral? @relation(fields: [latLngLiteralId], references: [id])
+  latLngLiteralId String?
   members         User[]
   Activities      Activity[]
-  latLngLiteralId String?
+  Message         Message[]
 
   @@index([latLngLiteralId])
 }
@@ -97,8 +94,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   groups        Group[]
-  chatsSent     Chat[]    @relation("ChatSender")
-  chatsReceived Chat[]    @relation("ChatReceiver")
+  message       Message[]
   Vote          Vote[]
 }
 
@@ -110,19 +106,18 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-model Chat {
-  id         String   @id @default(cuid())
-  senderId   String
-  receiverId String
-  content    String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  sender   User @relation("ChatSender", fields: [senderId], references: [id])
-  receiver User @relation("ChatReceiver", fields: [receiverId], references: [id])
+model Message {
+  id        String   @id @default(cuid())
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  groupId   String
+  sender    User     @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  senderId  String
 
   @@index([senderId])
-  @@index([receiverId])
+  @@index([groupId])
 }
 
 // Google Places API

@@ -1,13 +1,13 @@
-import { type NextPage } from "next";
+import { GetStaticPaths, GetStaticProps, type NextPage } from "next";
 import dynamic from "next/dynamic";
 import Head from "next/head";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { date } from "zod";
-import Header from "~/components/layout/header";
+import { useState } from "react";
+import Header from "~/components/header";
 import { api } from "~/utils/api";
 
-import "react-big-calendar/lib/css/react-big-calendar.css"
+import "react-big-calendar/lib/css/react-big-calendar.css";
+import { FaHeart, FaComment, FaCalendar } from "react-icons/fa";
+import { useRouter } from "next/router";
 
 const ChatComponent = dynamic(() => import("~/components/chatview"), {
   ssr: false,
@@ -18,47 +18,90 @@ const PlanningComponent = dynamic(() => import("~/components/planningview"), {
   loading: () => <div>Loading...</div>,
 });
 
-const GroupPage: NextPage = () => {
-  const [page, setPage] = useState("chat");
+const ActivityComponent = dynamic(() => import("~/components/activityview"), {
+  ssr: false,
+  loading: () => <div>Loading...</div>,
+});
 
-  useEffect(() => {
-    const last_page = localStorage.getItem("last_page");
-    if (last_page) {
-      setPage(last_page);
-    }
-  }, []);
-
-  const setSelectedPage = (page: string) => {
-    localStorage.setItem("last_page", page);
-    setPage(page);
+export const getStaticProps: GetStaticProps = (context) => {
+  const groupId = context.params?.id as string;
+  return {
+    props: {
+      groupId,
+    },
   };
+};
 
+export const getStaticPaths: GetStaticPaths = () => {
+  return { paths: [], fallback: "blocking" };
+};
 
+type PageType = "chat" | "planning" | "activity";
 
-  const id = useRouter().query.id as string;
+const GroupPage: NextPage<{ groupId: string }> = ({ groupId }) => {
+  const [page, setPage] = useState<PageType>("chat");
+
+  const router = useRouter();
 
   const { data: groupData, isLoading: groupLoading } =
-    api.group.getById.useQuery({ id });
+    api.group.getById.useQuery({ id: groupId });
 
-  if (!groupData) return <div>Something went wrong</div>;
+  if ((!groupLoading && !groupData) || groupData === null)
+    return router.push("/g");
 
   return (
     <>
       <Head>
-        <title>{page}</title>
+        <title>Summer-Trip{groupLoading ? "" : ` | ${groupData.name}`}</title>
       </Head>
-      <Header />
-      <main>
-        <PlanningComponent groupId={groupData.name} />
-      </main>
-      <footer>
-        <button className="h-12 w-12" onClick={() => setSelectedPage("like")}>
-          Like
-        </button>
-        <button className="h-12 w-12" onClick={() => setSelectedPage("chat")}>
-          Chat
-        </button>
-      </footer>
+
+      <div className="flex h-screen flex-col">
+        {/* Header */}
+        {/* // Affiche le header commun à toutes les pages, hormis la page de groupe g */}
+        <Header
+          groupId={groupId}
+          groupName={groupLoading ? "..." : groupData.name}
+        />
+
+        {/* Content */}
+        <main className="h-full flex-grow overflow-y-auto bg-[#405340] px-4 py-8">
+          {page === "chat" && <ChatComponent groupId={groupId} />}
+          {page === "planning" && <PlanningComponent groupId={groupId} />}
+          {page === "activity" && <ActivityComponent />}
+        </main>
+
+        {/* Footer */}
+        <footer className="fixed bottom-0 left-0 right-0 bg-[#1E5552] pt-0 text-[#E49A0A]">
+          <div className="flex items-center  justify-between px-4 py-2">
+            <button
+              className={`${
+                page === "activity" ? "bg-[#E49A0A] text-[#1E5552]" : ""
+              } rounded-full px-4 py-2`}
+              onClick={() => setPage("activity")}
+            >
+              <FaHeart className="h-12 w-12" />
+            </button>
+            <span className="mx-2 h-12 w-0.5 bg-[#E49A0A]"></span>
+            <button
+              className={`${
+                page === "chat" ? "bg-[#E49A0A] text-[#1E5552]" : ""
+              } rounded-full px-4 py-2`}
+              onClick={() => setPage("chat")}
+            >
+              <FaComment className="h-12 w-12" />
+            </button>
+            <span className="mx-2 h-12 w-0.5 bg-[#E49A0A]"></span>
+            <button
+              className={`${
+                page === "planning" ? "bg-[#E49A0A] text-[#1E5552]" : ""
+              } rounded-full px-4 py-2`}
+              onClick={() => setPage("planning")}
+            >
+              <FaCalendar className="h-12 w-12" />
+            </button>
+          </div>
+        </footer>
+      </div>
     </>
   );
 };

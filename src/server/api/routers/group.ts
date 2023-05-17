@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { type Prisma } from "@prisma/client";
 import { z } from "zod";
 
 import { env } from "~/env.mjs";
@@ -68,7 +68,7 @@ export const groupRouter = createTRPCRouter({
         if (!activity.photos) return;
         if (!activity.photos[0]) return;
 
-        const types = await prisma.$transaction(
+        const types = await ctx.prisma.$transaction(
           activity.types.map((type) => {
             return prisma.type.upsert({
               where: {

@@ -12,7 +12,7 @@ export const activityRouter = createTRPCRouter({
   rateActivity: protectedProcedure
     .input(z.object({ activityId: z.string(), rating: z.number() }))
     .mutation(({ input, ctx }) => {
-      return prisma.vote.create({
+      return ctx.prisma.vote.create({
         data: {
           activity: {
             connect: {
@@ -37,8 +37,8 @@ export const activityRouter = createTRPCRouter({
 
   getMainPhoto: protectedProcedure
     .input(z.object({ activityId: z.string() }))
-    .query(async ({ input }) => {
-      const activity = await prisma.activity.findUnique({
+    .query(async ({ input, ctx }) => {
+      const activity = await ctx.prisma.activity.findUnique({
         where: {
           id: input.activityId,
         },
@@ -61,7 +61,7 @@ export const activityRouter = createTRPCRouter({
         throw new Error("Photo not found");
       }
 
-      if (activity.place.photos[0].blob) return activity.place.photos[0].blob as string;
+      if (activity.place.photos[0].blob) return activity.place.photos[0].blob;
 
       const blob = await addPhoto(activity.place.photos[0].id);
 
