@@ -33,7 +33,7 @@ const Home: NextPage = () => {
           <h1 className="font-bold text-4xl">SUMMER TRIP</h1>
           <Image
                 className=""
-                src={"/icon_propre.png"}
+                src={"/soleilprincip.png"}
                 alt="User Logo"
                 width={300}
                 height={300}
