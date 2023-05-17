@@ -74,7 +74,7 @@ export const AppHeader = (props: { groupId: string, groupName: string }) => {
 };
 
 
-export const GroupHeader = (props:{isOpen:boolean}) => {
+export const GroupHeader = () => {
   const { data: sessionData } = useSession();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const toggleMenu = () => {

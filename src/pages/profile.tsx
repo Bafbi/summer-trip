@@ -2,8 +2,9 @@ import Head from "next/head";
 import React from "react";
 import { useSession, signOut } from "next-auth/react";
 import { api } from "~/utils/api";
-import Header from "~/components/header";
+
 import Image from "next/image";
+import { GroupHeader } from "~/components/header";
 
 const ProfilePage = () => {
 
@@ -20,7 +21,7 @@ const ProfilePage = () => {
       <div className="flex h-screen flex-col">
         {/* Header */}
         {/* // Affiche le header commun à toutes les pages, hormis la page de groupe g */}
-        <Header />
+        <GroupHeader />
         {/* Content */}
         <main className="h-full flex-grow overflow-hidden bg-[#405340] px-4 py-8">
           <div className="profile-container center text-center">
