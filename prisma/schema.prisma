@@ -27,17 +27,19 @@ model Group {
   members         User[]
   Activities      Activity[]
   Message         Chat[]
+  Planning        Planning[]
 
   @@index([latLngLiteralId])
 }
 
 model Activity {
-  id      String @id @default(cuid())
-  group   Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  groupId String
-  place   Place  @relation(fields: [placeId], references: [id], onDelete: Cascade)
-  placeId String
-  Vote    Vote[]
+  id       String     @id @default(cuid())
+  group    Group      @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  groupId  String
+  place    Place      @relation(fields: [placeId], references: [id], onDelete: Cascade)
+  placeId  String
+  Vote     Vote[]
+  Planning Planning[]
 
   @@index([groupId])
   @@index([placeId])
@@ -198,4 +200,17 @@ model Type {
   place    Place[]
 
   @@index([category])
+}
+
+model Planning {
+  id         String   @id @default(cuid())
+  group      Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  groupId    String
+  activity   Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  activityId String
+  start      DateTime
+  end        DateTime
+
+  @@index([groupId])
+  @@index([activityId])
 }

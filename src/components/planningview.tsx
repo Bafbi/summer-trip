@@ -5,11 +5,11 @@ import Head from "next/head";
 
 const localizer = dayjsLocalizer(dayjs);
 
-const PlanningView = (props: { groupId: string }) => {
-  const groupId = props.groupId;
+const PlanningView: React.FC<{ groupId: string }> = ({ groupId }) => {
 
-  const { data: groupData, isLoading: groupLoading } =
-    api.group.getById.useQuery({ id: groupId });
+  const { data: planningData } = api.planning.getEvents.useQuery({
+    groupId,
+  });
 
   const localizer = dayjsLocalizer(dayjs);
 
@@ -17,13 +17,16 @@ const PlanningView = (props: { groupId: string }) => {
     <div className="h-full">
         <Calendar
           localizer={localizer}
-          events={[
-            {
-              title: "My event",
-              start: new Date(),
-              end: dayjs().add(1, "hour").toDate(),
-            },
-          ]}
+          events={planningData ? 
+            planningData.map((event) => {
+            return {
+              title: event.activity.place.name,
+              start: event.start,
+              end: event.end,
+            };
+            })
+          : []
+          }
           startAccessor="start"
           endAccessor="end"
         />
