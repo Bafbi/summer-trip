@@ -6,10 +6,13 @@ import Link from "next/link";
 import { useState } from "react";
 import { FaPlus, FaPlusSquare } from "react-icons/fa";
 import { GroupDropMenu } from "~/components/dropMenu";
+import { GroupComponent } from "~/components/groupcomponent";
 import { api } from "~/utils/api";
 
 const GroupsPage: NextPage = () => {
-  const { data: sessionData } = useSession({ required: true });
+  const { data: sessionData, status: sessionStatus } = useSession({
+    required: true,
+  });
   const { data: groupsData, isLoading: groupsLoading } =
     api.group.getAll.useQuery();
 
@@ -61,9 +64,6 @@ const GroupsPage: NextPage = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  if (groupsLoading) return <div>Loading...</div>;
-  if (!groupsData) return <div>Something went wrong</div>;
-
   return (
     <>
       <Head>
@@ -71,36 +71,37 @@ const GroupsPage: NextPage = () => {
       </Head>
 
       <header>
-        <div className="flex h-16 items-center justify-between bg-[#1E5552] text-[#E49A0A]">
-          <button className="px-4 h-full">
+        <div className="flex h-16 items-center justify-between bg-secondary">
+          <button className="mx-4 h-full w-14">
             {sessionData?.user.image ? (
               <Image
-                className="rounded-full object-contain h-14 "
+                className=""
                 src={"/logo.svg"}
                 alt="User Logo"
-                width={64}
-                height={64}
+                width={56}
+                height={56}
               />
             ) : (
               "Sign in"
             )}
           </button>
-          <h1 className="px-2 text-xl font-bold text-[#E49A0A] ">
-            {sessionData?.user?.name}
+
+          <h1 className="px-2 text-xl font-bold text-primary">
+            {sessionStatus !== "loading" ? sessionData.user.name : "..."}
           </h1>
 
-          <button className="px-4 h-full" onClick={toggleMenu}>
-            {sessionData?.user.image ? (
-              <Image
-                className="rounded-full object-contain h-14 "
-                src={sessionData.user.image}
-                alt="User Logo"
-                width={64}
-                height={64}
-              />
-            ) : (
-              "Sign in"
-            )}
+          <button className="mx-4 h-full w-14" onClick={toggleMenu}>
+            <Image
+              className="rounded-full"
+              src={
+                sessionStatus !== "loading" && sessionData.user.image
+                  ? sessionData.user.image
+                  : "/loading-user-icon.png"
+              }
+              alt="User Logo"
+              width={56}
+              height={56}
+            />
           </button>
         </div>
         <GroupDropMenu isOpen={isMenuOpen} />
@@ -160,39 +161,33 @@ const GroupsPage: NextPage = () => {
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-6 p-4 md:grid-cols-2">
-            <div
-              onClick={toggleExpansion}
-              className={`${
-                isExpanded ? "w-full md:col-span-2" : ""
-              } flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg bg-white p-4 md:p-6`}
-            >
-              {isExpanded ? (
-                <div>
-                  <img src="/minus.png" alt="Close Form" className="h-9 w-9" />
-                  <h1 className="mt-2 text-xs">Close Form</h1>
+            <div className="h-24 rounded-lg bg-tertiary shadow">
+              <button
+                className="flex h-full w-full flex-col items-center justify-center p-2"
+                onClick={toggleExpansion}
+              >
+                <FaPlus className="w-full flex-1 border-b-2 border-accent  text-gray-300" />
+                <div className="flex-2 mt-2 max-w-xl text-sm text-gray-200">
+                  <p>Create Group</p>
                 </div>
-              ) : (
-                <div className="flex flex-col items-center">
-                  {" "}
-                  {/* Ajout des classes CSS "flex flex-col items-center" */}
-                  <FaPlus className="h-9 w-9" />
-                  <h1 className="mt-2 text-xs">Create Group</h1>
-                </div>
-              )}
+              </button>
             </div>
-
-            {groupsData.map((group) => {
-              return (
-                <Link key={group.id} href={`/g/${group.id}`}>
-                  <div className="flex flex-col items-center justify-center gap-2 rounded-lg bg-white p-4 px-2">
-                    <div className="flex h-full flex-col items-center justify-end">
-                      <div className="h-8 w-8 rounded-full bg-[#1CCDB3]"></div>
-                      <h1 className="mt-2 text-xs">{group.name}</h1>
-                    </div>
-                  </div>
-                </Link>
-              );
-            })}
+            {groupsLoading ? (
+              <div className="h-24 rounded-lg bg-tertiary shadow">
+                <div className="flex flex-col items-center justify-center gap-2 rounded-lg p-4 md:p-6">
+                  <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-gray-300"></div>
+                  <h1 className="mt-2 text-xs text-gray-200">Loading...</h1>
+                </div>
+              </div>
+            ) : !groupsData ? (
+              <div className="flex flex-col items-center justify-center gap-2 rounded-lg bg-white p-4 md:p-6">
+                <h1 className="mt-2 text-xs">Something went wrong</h1>
+              </div>
+            ) : (
+              groupsData.map((group) => {
+                return <GroupComponent key={group.id} {...group} />;
+              })
+            )}
           </div>
         )}
       </main>
