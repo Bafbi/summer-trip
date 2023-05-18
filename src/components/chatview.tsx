@@ -67,33 +67,33 @@ const ChatView: React.FC<{ groupId: string }> = ({ groupId }) => {
     <div className="page flex flex-col items-center justify-center py-0 px-0">
     <div className="max-w-md max-h-md rounded-lg bg-[#405340] shadow-lg">
       <div className="messages flex flex-col items-center justify-center gap-12 px-0 py-2">
-        {messages.map((message, i) => (
+        {messages.map((message, i) => message ? (
           <div
             key={i}
             className={`message flex flex-col ${
-              message?.sender.name === sessionData?.user.name ? "items-end" : "items-start"
+              message.sender.name === sessionData?.user.name ? "items-end" : "items-start"
             } justify-start gap-2 px-4 py-2 ${
-              message?.sender.name === sessionData?.user.name ? "self-end" : "self-start"
+              message.sender.name === sessionData?.user.name ? "self-end" : "self-start"
             }`}
           >
-            {message?.sender.name !== sessionData?.user.name && (
+            {message.sender.name !== sessionData?.user.name && (
               <div className="flex items-center">
-                <img
+                <Image
                   className="w-12 h-12 rounded-full mr-2"
-                  src={message?.sender.image}
+                  src={message.sender.image ?? ''}
                   alt="User Profile"
                 />
                 <h1 className="text-[#1CCDB3] text-3xl font-bold">
-                  {message?.sender.name}
+                  {message.sender.name}
                 </h1>
               </div>
             )}
-            {message?.sender.name === sessionData?.user.name && (
+            {message.sender.name === sessionData?.user.name && (
               <div className="flex items-center justify-end">
                 <h1 className="text-[#E49A0A] text-3xl font-bold">
-                  {message?.sender.name}
+                  {message.sender.name}
                 </h1>
-                <img
+                <Image
                   className="w-12 h-12 rounded-full mt-2 ml-2"
                   src={sessionData?.user.image ?? ''}
                   alt="User Profile"
@@ -104,7 +104,10 @@ const ChatView: React.FC<{ groupId: string }> = ({ groupId }) => {
               {message?.content}
             </p>
           </div>
-        ))}
+        ) : (
+          <></>
+        )
+        )}
         <form
           onSubmit={sendMessage}
           className="flex items-center justify-between px-4 py-2"

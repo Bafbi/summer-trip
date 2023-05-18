@@ -12,18 +12,18 @@ const ActivityComponent: React.FC<{ groupId: string }> = ({ groupId }) => {
   });
   
 
-  useEffect(() => {
-    if (activityData) {
-      setActivities(activityData);
-      setCurrentActivity(activityData[0]);
-    }
-  }, [activityData]);
+  // useEffect(() => {
+  //   if (activityData) {
+  //     setActivities(activityData);
+  //     setCurrentActivity(activityData[0]);
+  //   }
+  // }, [activityData]);
 
-  const handleNextActivity = () => {
-    const currentIndex = activities.indexOf(currentActivity!);
-    const nextIndex = (currentIndex + 1) % activities.length;
-    setCurrentActivity(activities[nextIndex]);
-  };
+  // const handleNextActivity = () => {
+  //   const currentIndex = activities.indexOf(currentActivity!);
+  //   const nextIndex = (currentIndex + 1) % activities.length;
+  //   setCurrentActivity(activities[nextIndex]);
+  // };
 
   if (!currentActivity) {
     return <div>Loading...</div>;
@@ -32,7 +32,7 @@ const ActivityComponent: React.FC<{ groupId: string }> = ({ groupId }) => {
   return (
     <div>
       <h2 className="text-center text-[#E49A0A] font-bold text-2xl">Envie d'une activité ?</h2>
-      <div>
+      {/* <div>
         <h3>{currentActivity.place.name}</h3> 
       </div>
       <div>
@@ -42,7 +42,7 @@ const ActivityComponent: React.FC<{ groupId: string }> = ({ groupId }) => {
         <button onClick={handleNextActivity} className="w-24 h-24 rounded-full bg-red-500 text-white flex justify-center items-center ml-6">
           <FaHeart className="h-8 w-8" />
         </button>
-      </div>
+      </div> */}
     </div>
   );
 };
