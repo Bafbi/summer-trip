@@ -3,6 +3,7 @@
     "name" : "Summer Trip",
     "shortname" : "SummerTrip",
     "background_color": "#40534D",
+    "start_url": "/g",
     "icons" : [
         {
           "src": "pwa/manifest-icon-192.maskable.png",

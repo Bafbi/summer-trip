@@ -17,6 +17,12 @@ export const getActivitiesByGroupId = async (groupId: string) => {
         },
       },
       Vote: true,
+      group: {
+        select: {
+          startDate: true,
+          endDate: true,
+        },
+      }
     },
   });
 

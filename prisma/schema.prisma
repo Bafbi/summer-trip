@@ -15,32 +15,31 @@ datasource db {
   relationMode = "prisma"
 }
 
-model Example {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
 model Group {
   id              String         @id @default(cuid())
   name            String         @default("New Group")
   description     String?
   destination     String?
+  startDate       DateTime?
+  endDate         DateTime?
   location        LatLngLiteral? @relation(fields: [latLngLiteralId], references: [id])
+  latLngLiteralId String?
   members         User[]
   Activities      Activity[]
-  latLngLiteralId String?
+  Message         Chat[]
+  Planning        Planning[]
 
   @@index([latLngLiteralId])
 }
 
 model Activity {
-  id      String @id @default(cuid())
-  group   Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  groupId String
-  place   Place  @relation(fields: [placeId], references: [id], onDelete: Cascade)
-  placeId String
-  Vote    Vote[]
+  id       String     @id @default(cuid())
+  group    Group      @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  groupId  String
+  place    Place      @relation(fields: [placeId], references: [id], onDelete: Cascade)
+  placeId  String
+  Vote     Vote[]
+  Planning Planning[]
 
   @@index([groupId])
   @@index([placeId])
@@ -97,8 +96,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   groups        Group[]
-  chatsSent     Chat[]    @relation("ChatSender")
-  chatsReceived Chat[]    @relation("ChatReceiver")
+  message       Chat[]
   Vote          Vote[]
 }
 
@@ -111,18 +109,16 @@ model VerificationToken {
 }
 
 model Chat {
-  id         String   @id @default(cuid())
-  senderId   String
-  receiverId String
-  content    String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  sender   User @relation("ChatSender", fields: [senderId], references: [id])
-  receiver User @relation("ChatReceiver", fields: [receiverId], references: [id])
+  id        String   @id @default(cuid())
+  content   String
+  createdAt DateTime @default(now())
+  sender    User     @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  senderId  String
+  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  groupId   String
 
   @@index([senderId])
-  @@index([receiverId])
+  @@index([groupId])
 }
 
 // Google Places API
@@ -204,4 +200,17 @@ model Type {
   place    Place[]
 
   @@index([category])
+}
+
+model Planning {
+  id         String   @id @default(cuid())
+  group      Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  groupId    String
+  activity   Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  activityId String
+  start      DateTime
+  end        DateTime
+
+  @@index([groupId])
+  @@index([activityId])
 }
