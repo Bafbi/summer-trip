@@ -10,6 +10,7 @@ const pusher = new Pusher(env.NEXT_PUBLIC_PUSHER_KEY, {
 });
 
 const ChatView: React.FC<{ groupId: string }> = ({ groupId }) => {
+  console.log("AHHHHHHHHHHHHHHHHHH",groupId)
   const [messages, setMessages] = useState<
     RouterOutputs["message"]["getChatMessage"][]
   >([]);

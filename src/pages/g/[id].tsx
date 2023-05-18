@@ -67,7 +67,7 @@ const GroupPage: NextPage<{ groupId: string }> = ({ groupId }) => {
         <main className="h-full flex-grow overflow-y-auto bg-[#405340] px-4 py-8">
           {page === "chat" && <ChatComponent groupId={groupId} />}
           {page === "planning" && <PlanningComponent groupId={groupId} />}
-          {page === "activity" && <ActivityComponent />}
+          {page === "activity" && <ActivityComponent groupId={groupId}/>}
         </main>
 
         {/* Footer */}
