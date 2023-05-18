@@ -1,9 +1,9 @@
-import { Prisma } from "@prisma/client";
-import { type } from "os";
+import dayjs from "dayjs";
 import { getActivitiesByGroupId } from "../utils/activity";
+import { CalendarData, addPlanningEvents } from "../utils/planning";
 import { durees } from "./duree";
 
-async function generateTabActivity(groupID:string) {
+export const generatePlaning = async (groupID:string) => {
   const activities = await getActivitiesByGroupId(groupID);
   const TabAct = activities.map((activity) => {
     const hours = activity.place.openingHours;
@@ -22,7 +22,22 @@ async function generateTabActivity(groupID:string) {
     return { nom, type, lattitude, longitude, duree };
   });
 
-  return TabAct;
+
+  const tmpPlanning: CalendarData[] = [];
+  if (activities.length === 0) {
+    throw new Error("No activity found");
+  }
+  const a = activities[0];
+  if (!a) {
+    throw new Error("Activity not found");
+  }
+  tmpPlanning.push({
+    start: dayjs().toDate(),
+    end: dayjs().add(Math.random()*10 + 1, "hour").toDate(),
+    activityId: a.id,
+  });
+
+  await addPlanningEvents(groupID, tmpPlanning);
 }
 
 
