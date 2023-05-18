@@ -11,11 +11,7 @@ const pusher = new Pusher(env.NEXT_PUBLIC_PUSHER_KEY, {
 });
 
 const ChatView: React.FC<{ groupId: string }> = ({ groupId }) => {
-  const { data: sessionData } = useSession({ required: true });
-  const { data: groupsData, isLoading: groupsLoading } =
-    api.group.getAll.useQuery();
-
-
+  console.log("AHHHHHHHHHHHHHHHHHH",groupId)
   const [messages, setMessages] = useState<
     RouterOutputs["message"]["getChatMessage"][]
   >([]);

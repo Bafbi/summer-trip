@@ -1,24 +1,45 @@
-import React from "react";
-import { FaHeart, FaTimes, FaRegHeart } from 'react-icons/fa';
+import React, { useState, useEffect } from "react";
+import { FaHeart, FaTimes } from 'react-icons/fa';
+import { Activity } from "@prisma/client";
+import { api } from "~/utils/api";
 
-const CoeurPageContent = () => {
+const ActivityComponent: React.FC<{ groupId: string }> = ({ groupId }) => {
+  const [activities, setActivities] = useState<Activity[]>([]);
+  const [currentActivity, setCurrentActivity] = useState<Activity | null>(null);
+  
+  const { data: activityData } = api.activity.getActivitiesByGroupId.useQuery({
+    groupId,
+  });
+  
+
+  useEffect(() => {
+    if (activityData) {
+      setActivities(activityData);
+      setCurrentActivity(activityData[0]);
+    }
+  }, [activityData]);
+
+  const handleNextActivity = () => {
+    const currentIndex = activities.indexOf(currentActivity!);
+    const nextIndex = (currentIndex + 1) % activities.length;
+    setCurrentActivity(activities[nextIndex]);
+  };
+
+  if (!currentActivity) {
+    return <div>Loading...</div>;
+  }
+
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-      <h2 className="text-center text-[#E49A0A] font-bold text-2xl">{"Envie d'une activité ?"}</h2>
-      <div className="flex justify-center items-center">
-        {/* Placeholder pour l'image de l'activité */}
-        {/* Utilisez une logique pour afficher l'image récupérée de l'API */}
-        <div className="w-full h-96 bg-gray-200"></div>
+    <div>
+      <h2 className="text-center text-[#E49A0A] font-bold text-2xl">Envie d'une activité ?</h2>
+      <div>
+        <h3>{currentActivity.place.name}</h3> 
       </div>
-      <div className="flex justify-center mt-4">
-        {/* Boutons ronds */}
-        <button className="w-24 h-24 rounded-full bg-[#1E5552] text-white flex justify-center items-center">
+      <div>
+        <button onClick={handleNextActivity} className="w-24 h-24 rounded-full bg-[#1E5552] text-white flex justify-center items-center">
           <FaTimes className="h-8 w-8" />
         </button>
-        <button className="w-24 h-24 rounded-full bg-gray-500 text-white flex justify-center items-center font-extrabold ml-6">
-          Maybe
-        </button>
-        <button className="w-24 h-24 rounded-full bg-red-500 text-white flex justify-center items-center ml-6">
+        <button onClick={handleNextActivity} className="w-24 h-24 rounded-full bg-red-500 text-white flex justify-center items-center ml-6">
           <FaHeart className="h-8 w-8" />
         </button>
       </div>
@@ -26,4 +47,4 @@ const CoeurPageContent = () => {
   );
 };
 
-export default CoeurPageContent;
+export default ActivityComponent;
