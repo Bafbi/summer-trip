@@ -67,7 +67,7 @@ const AppPage = (props: { groupId: string; } ) => {
         />
 
         {/* Content */}
-        <main className="flex-grow overflow-y-auto bg-[#405340] px-4 py-8" style={{ height: 'calc(100vh - 220px)' }}>
+        <main className="flex-grow overflow-y-auto overflow-x-hidden bg-[#405340] px-0 py-0" style={{ height: 'calc(100vh - 220px)' }}>
 
           {page === "chat" && <ChatComponent groupId={groupId} />}
           {page === "planning" && <PlanningComponent groupId={groupId} />}
