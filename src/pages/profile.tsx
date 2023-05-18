@@ -1,5 +1,4 @@
 import Head from "next/head";
-import React from "react";
 import { useSession, signOut } from "next-auth/react";
 import { api } from "~/utils/api";
 

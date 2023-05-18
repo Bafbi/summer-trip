@@ -1,11 +1,8 @@
 import { z } from "zod";
 
 import {
-  createTRPCRouter,
-  publicProcedure,
-  protectedProcedure,
+  createTRPCRouter, protectedProcedure
 } from "~/server/api/trpc";
-import { prisma } from "~/server/db";
 import { addPhoto, getActivitiesByGroupId } from "~/server/utils/activity";
 
 export const activityRouter = createTRPCRouter({
@@ -31,7 +28,7 @@ export const activityRouter = createTRPCRouter({
 
   getActivitiesByGroupId: protectedProcedure
     .input(z.object({ groupId: z.string() }))
-    .query(({ input, ctx }) => {
+    .query(({ input }) => {
       return getActivitiesByGroupId(input.groupId);
     }),
 

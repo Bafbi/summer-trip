@@ -1,7 +1,6 @@
 import { type Prisma } from "@prisma/client";
 import { z } from "zod";
 
-import { env } from "~/env.mjs";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { prisma } from "~/server/db";

@@ -1,9 +1,5 @@
-import { useState } from "react";
 import Link from "next/link";
-import React from "react";
-import Head from "next/head";
-import { useSession, signOut } from "next-auth/react";
-import { api } from "~/utils/api";
+import { signOut } from "next-auth/react";
 
 export const GroupDropMenu = (props:{isOpen:boolean}) => {
 

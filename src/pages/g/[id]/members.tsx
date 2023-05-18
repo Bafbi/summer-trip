@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react";
 import Head from "next/head";
-import React from "react";
 import { FaTimes } from 'react-icons/fa';
 import { AppHeader } from "~/components/header";
 import { type GetStaticProps, type GetStaticPaths, NextPage } from "next";
-import { RouterOutputs, api } from "~/utils/api";
-import { Members } from "pusher-js";
+import { api } from "~/utils/api";
 import { User } from "@prisma/client";
 
 export const getStaticProps: GetStaticProps = (context) => {

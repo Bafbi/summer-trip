@@ -1,7 +1,6 @@
 import { api } from "~/utils/api";
 import dayjs from "dayjs";
 import { Calendar, dayjsLocalizer } from "react-big-calendar";
-import Head from "next/head";
 
 const localizer = dayjsLocalizer(dayjs);
 

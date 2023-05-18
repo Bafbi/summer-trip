@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { FaHeart, FaTimes } from 'react-icons/fa';
-import { Activity } from "@prisma/client";
+import React, { useState } from "react";
+import { type Activity } from "@prisma/client";
 import { api } from "~/utils/api";
 
 const ActivityComponent: React.FC<{ groupId: string }> = ({ groupId }) => {

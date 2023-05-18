@@ -1,4 +1,4 @@
-import { type GetStaticPaths, type GetStaticProps, type NextPage } from "next";
+import { type GetStaticPaths, type GetStaticProps } from "next";
 import dynamic from "next/dynamic";
 import Head from "next/head";
 import { useState } from "react";

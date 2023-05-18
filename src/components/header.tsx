@@ -1,9 +1,8 @@
 import { useState } from "react";
 import Link from "next/link";
-import React from "react";
 import { AppDropMenu } from "~/components/dropMenu";
-import {GroupDropMenu} from "~/components/dropMenu";
-import {useSession } from "next-auth/react";
+import { GroupDropMenu } from "~/components/dropMenu";
+import { useSession } from "next-auth/react";
 
 export const AppHeader = (props: { groupId: string, groupName: string }) => {
   
