@@ -76,7 +76,7 @@ const GroupsPage: NextPage = () => {
             {sessionData?.user.image ? (
               <Image
                 className="rounded-full object-contain h-14 "
-                src={"/soleilprincip.png"}
+                src={"/logo.svg"}
                 alt="User Logo"
                 width={64}
                 height={64}

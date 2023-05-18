@@ -33,10 +33,10 @@ const Home: NextPage = () => {
           <h1 className="font-bold text-4xl">SUMMER TRIP</h1>
           <Image
                 className=""
-                src={"/soleilprincip.png"}
+                src={"/logo.svg"}
                 alt="User Logo"
-                width={300}
-                height={300}
+                width={600}
+                height={600}
               />
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8"></div>
           <div className="flex flex-col items-center gap-2">
