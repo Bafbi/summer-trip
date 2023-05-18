@@ -1,9 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Head from "next/head";
 import React from "react";
 import { FaTimes } from 'react-icons/fa';
 import { AppHeader } from "~/components/header";
 import { type GetStaticProps, type GetStaticPaths, NextPage } from "next";
+import { RouterOutputs, api } from "~/utils/api";
+import { Members } from "pusher-js";
+import { User } from "@prisma/client";
 
 export const getStaticProps: GetStaticProps = (context) => {
   const groupId = context.params?.id as string;
@@ -19,13 +22,26 @@ export const getStaticPaths: GetStaticPaths = () => {
 }
 
 const GroupMembersPage: NextPage<{groupId: string}> = ({groupId}) => {
+  const [members, setMembers] = useState<User[]>([]);
 
-  const [members, setMembers] = useState<string[]>(["John", "Jane", "Bob"]);
+  const [inviteInput, setInviteInput] = useState<string>("");
 
-  const removeMember = (member: string) => {
-    const updatedMembers = members.filter((m) => m !== member);
-    setMembers(updatedMembers);
-  };
+  const { data: groupData, isLoading: groupLoading } = api.group.getMembers.useQuery({ groupId: groupId });
+
+  const { mutate: removeMember } = api.group.removeMember.useMutation({
+    onSuccess: (_, variables) => {
+      const updatedMembers = members.filter((m) => m.id !== variables.userId);
+      setMembers(updatedMembers);
+    },
+  });
+
+
+  useEffect(() => {
+    if (!groupLoading && groupData) {
+      setMembers(groupData.members);
+    }
+  }, [groupData, groupLoading]); // Run the effect only once on component mount
+
 
   const inviteMember = () => {
     // Code pour inviter un membre, à implémenter selon vos besoins
@@ -50,16 +66,16 @@ const GroupMembersPage: NextPage<{groupId: string}> = ({groupId}) => {
             <h2 className="text-center  text-[#E49A0A]">Liste des membres du groupe</h2>
             <ul className="mt-4  text-[#E49A0A]">
               {members.map((member, index) => (
-                <li key={member} className={`flex items-center justify-between py-2 border rounded-lg px-4 ${index !== members.length - 1 ? 'mb-2' : ''}`}>
-                  <span>{member}</span>
-                  <button onClick={() => removeMember(member)}>
+                <li key={member.id} className="flex item-center justify-between py-2 px-4">
+                  <span>{member.name}</span>
+                  <button onClick={() => removeMember({groupId, userId: member.id})}>
                     <FaTimes className="h-4 w-4 text-red-500" />
                   </button>
                 </li>
               ))}
             </ul>
           </div>
-          <div className="mt-4">
+          <div className="mt-4 w-full justify-center flex">
             <button
               className="bg-[#1E5552]  text-[#E49A0A] font-bold py-2 px-4 rounded"
               onClick={inviteMember}

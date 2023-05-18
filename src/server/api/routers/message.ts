@@ -42,6 +42,7 @@ export const messageRouter = createTRPCRouter({
         sender: {
           select: {
             name: true,
+            image: true,
           },
         },
         createdAt: true,
@@ -61,6 +62,7 @@ export const messageRouter = createTRPCRouter({
           sender: {
             select: {
               name: true,
+              image: true,
             },
           },
           createdAt: true,

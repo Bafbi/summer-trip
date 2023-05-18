@@ -132,4 +132,96 @@ export const groupRouter = createTRPCRouter({
         });
       });
     }),
+
+    getMembers: protectedProcedure
+    .input(z.object({ groupId: z.string() }))
+    .query(({ input, ctx }) => {
+      return ctx.prisma.group.findUnique({
+        where: {
+          id: input.groupId,
+        },
+        select: {
+          members: true,
+        },
+      });
+    }
+    ),
+
+    addMember: protectedProcedure
+    .input(z.object({ groupId: z.string(), userId: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const group = await ctx.prisma.group.findUnique({
+        where: {
+          id: input.groupId,
+        },
+        select: {
+          members: true,
+        },
+      });
+
+      if (!group) {
+        throw new Error("Group not found");
+      }
+
+      const isMember = group.members.some((member) => {
+        return member.id === input.userId;
+      });
+
+      if (isMember) {
+        throw new Error("User is already a member of this group");
+      }
+
+      await ctx.prisma.group.update({
+        where: {
+          id: input.groupId,
+        },
+        data: {
+          members: {
+            connect: {
+              id: input.userId,
+            },
+          },
+        },
+      });
+    }
+    ),
+
+    removeMember: protectedProcedure
+    .input(z.object({ groupId: z.string(), userId: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const group = await ctx.prisma.group.findUnique({
+        where: {
+          id: input.groupId,
+        },
+        select: {
+          members: true,
+        },
+      });
+
+      if (!group) {
+        throw new Error("Group not found");
+      }
+
+      const isMember = group.members.some((member) => {
+        return member.id === input.userId;
+      });
+
+      if (!isMember) {
+        throw new Error("User is not a member of this group");
+      }
+
+      await ctx.prisma.group.update({
+        where: {
+          id: input.groupId,
+        },
+        data: {
+          members: {
+            disconnect: {
+              id: input.userId,
+            },
+          },
+        },
+      });
+    }
+    ),
 });
