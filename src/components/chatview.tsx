@@ -11,7 +11,8 @@ const pusher = new Pusher(env.NEXT_PUBLIC_PUSHER_KEY, {
 });
 
 const ChatView: React.FC<{ groupId: string }> = ({ groupId }) => {
-  console.log("AHHHHHHHHHHHHHHHHHH",groupId)
+  const { data: sessionData } = useSession();
+
   const [messages, setMessages] = useState<
     RouterOutputs["message"]["getChatMessage"][]
   >([]);
@@ -70,27 +71,27 @@ const ChatView: React.FC<{ groupId: string }> = ({ groupId }) => {
           <div
             key={i}
             className={`message flex flex-col ${
-              message.sender.name === sessionData?.user.name ? "items-end" : "items-start"
+              message?.sender.name === sessionData?.user.name ? "items-end" : "items-start"
             } justify-start gap-2 px-4 py-2 ${
-              message.sender.name === sessionData?.user.name ? "self-end" : "self-start"
+              message?.sender.name === sessionData?.user.name ? "self-end" : "self-start"
             }`}
           >
-            {message.sender.name !== sessionData?.user.name && (
+            {message?.sender.name !== sessionData?.user.name && (
               <div className="flex items-center">
                 <img
                   className="w-12 h-12 rounded-full mr-2"
-                  src={message.sender.image}
+                  src={message?.sender.image}
                   alt="User Profile"
                 />
                 <h1 className="text-[#1CCDB3] text-3xl font-bold">
-                  {message.sender.name}
+                  {message?.sender.name}
                 </h1>
               </div>
             )}
-            {message.sender.name === sessionData?.user.name && (
+            {message?.sender.name === sessionData?.user.name && (
               <div className="flex items-center justify-end">
                 <h1 className="text-[#E49A0A] text-3xl font-bold">
-                  {message.sender.name}
+                  {message?.sender.name}
                 </h1>
                 <img
                   className="w-12 h-12 rounded-full mt-2 ml-2"
@@ -100,7 +101,7 @@ const ChatView: React.FC<{ groupId: string }> = ({ groupId }) => {
               </div>
             )}
             <p className="text-gray-300 text-2xl px-16 font-semibold">
-              {message.content}
+              {message?.content}
             </p>
           </div>
         ))}
