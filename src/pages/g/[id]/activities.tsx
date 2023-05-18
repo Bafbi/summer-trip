@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { api } from "~/utils/api";
+import { AppHeader } from "~/components/header";
 
 export const getStaticProps: GetStaticProps = (context) => {
   const groupId = context.params?.id as string;
@@ -38,21 +39,24 @@ const ActivitiesPage: NextPage<{groupId: string}> = ({groupId}) => {
       <Head>
         <title>Groups</title>
       </Head>
-      {/* <Header/> */}
-      <main>
-        <div className="min-h-screen bg-primary-900 p-4 sm:p-6 lg:p-8">
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="flex flex-col h-screen bg-[#40534D]">
+      {/* Header */}
+      <AppHeader groupId={groupId} groupName={"Activities"}/>
+
+      <main className="mt-8">
+        <div className="grid grid-cols-2 gap-4">
             {activityData.map((activity) => (
               <div
                 key={activity.id}
                 className="overflow-hidden rounded-lg bg-white shadow"
               >
+                
               <span>{activity.place.name}</span>
               </div>
             ))}
           </div>
-        </div>
       </main>
+      </div>
     </>
   );
 };
