@@ -30,7 +30,7 @@ const ActivityComponent: React.FC<{ groupId: string }> = ({ groupId }) => {
 
   return (
     <div>
-      <h2 className="text-center text-[#E49A0A] font-bold text-2xl">Envie d'une activité ?</h2>
+      <h2 className="text-center text-[#E49A0A] font-bold text-2xl">{`Envie d'une activité ?`}</h2>
       {/* <div>
         <h3>{currentActivity.place.name}</h3> 
       </div>
