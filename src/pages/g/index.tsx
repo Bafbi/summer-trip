@@ -165,8 +165,7 @@ const GroupsPage: NextPage = () => {
                   id="placeName"
                   placeholder="Que ce soit une ville, un quartier, etc."
                   maxLength={30}
-                  className="placeContent w-full rounded-md border border-[#E49A0A] border-solid bg-[#40534D]
-                  text-gray-300 px-3 py-2 min-height:20px"
+                  className="placeContent w-full rounded-md border border-[#E49A0A] border-solid bg-[#40534D] text-gray-300 px-3 py-2 min-height:20px"
                   value={placeName}
                   onChange={(e) => setPlaceName(e.target.value)}
                   required={true}
@@ -174,7 +173,7 @@ const GroupsPage: NextPage = () => {
               </div>
               <p className="text-m font-light text-left text-[#E49A0A] my-4">
                 Astuce : Pour avoir des suggestions fiables, penses à écrire
-                <span className="font-extrabold"> correctement</span> l'endroit où tu souhaites voyager !
+                <span className="font-extrabold"> correctement</span> le lieu où tu souhaites voyager !
               </p>
               <div className="mb-4">
                 <label htmlFor="startDate" className="mb-2 mt-4 block font-bold text-left text-l text-[#1CCDB3]">
