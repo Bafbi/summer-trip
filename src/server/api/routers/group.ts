@@ -6,6 +6,7 @@ import { env } from "~/env.mjs";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { prisma } from "~/server/db";
 import { findNewActivities, getLocation } from "../../utils/place";
+import dayjs from "dayjs";
 
 export const groupRouter = createTRPCRouter({
   getAll: protectedProcedure.query(({ ctx }) => {
@@ -133,7 +134,7 @@ export const groupRouter = createTRPCRouter({
       });
     }),
 
-    getMembers: protectedProcedure
+  getMembers: protectedProcedure
     .input(z.object({ groupId: z.string() }))
     .query(({ input, ctx }) => {
       return ctx.prisma.group.findUnique({
@@ -144,10 +145,9 @@ export const groupRouter = createTRPCRouter({
           members: true,
         },
       });
-    }
-    ),
+    }),
 
-    addMember: protectedProcedure
+  addMember: protectedProcedure
     .input(z.object({ groupId: z.string(), userId: z.string() }))
     .mutation(async ({ input, ctx }) => {
       const group = await ctx.prisma.group.findUnique({
@@ -183,10 +183,9 @@ export const groupRouter = createTRPCRouter({
           },
         },
       });
-    }
-    ),
+    }),
 
-    removeMember: protectedProcedure
+  removeMember: protectedProcedure
     .input(z.object({ groupId: z.string(), userId: z.string() }))
     .mutation(async ({ input, ctx }) => {
       const group = await ctx.prisma.group.findUnique({
@@ -222,6 +221,74 @@ export const groupRouter = createTRPCRouter({
           },
         },
       });
-    }
-    ),
+    }),
+
+  generateInvitationLink: protectedProcedure
+    .input(z.object({ groupId: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      return ctx.prisma.inviteLink.create({
+        data: {
+          group: {
+            connect: {
+              id: input.groupId,
+            },
+          },
+          link:
+            Math.random().toString(36).substring(2, 15) +
+            Math.random().toString(36).substring(2, 15),
+          expiresAt: dayjs().add(1, "day").toDate(),
+          maxUses: 99,
+        },
+      });
+    }),
+
+  getInvitationLinks: protectedProcedure
+    .input(z.object({ groupId: z.string() }))
+    .query(async ({ input, ctx }) => {
+      return ctx.prisma.inviteLink.findMany({
+        where: {
+          groupId: input.groupId,
+        },
+      });
+    }),
+
+  useInvitationLink: protectedProcedure
+    .input(z.object({ link: z.string() }))
+    .query(async ({ input, ctx }) => {
+      const link = await ctx.prisma.inviteLink.findUnique({
+        where: {
+          link: input.link,
+        },
+      });
+
+      if (!link) {
+        throw new Error("Link not found");
+      }
+
+      if (link.used >= link.maxUses || link.expiresAt < new Date()) {
+        throw new Error("Link expired");
+      }
+
+      await ctx.prisma.inviteLink.update({
+        where: {
+          link: input.link,
+        },
+        data: {
+          used: link.used + 1,
+        },
+      });
+
+      await ctx.prisma.group.update({
+        where: {
+          id: link.groupId,
+        },
+        data: {
+          members: {
+            connect: {
+              id: ctx.session?.user?.id,
+            },
+          },
+        },
+      });
+    }),
 });
