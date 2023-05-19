@@ -68,4 +68,32 @@ export const activityRouter = createTRPCRouter({
       return blob;
     }
   ),
+
+  getTopRatedActivities: protectedProcedure
+  .input(z.object({ groupId: z.string() }))
+  .query(async ({ input }) => {
+    const { groupId } = input;
+
+    const topRatedActivities = await prisma.activity.findMany({
+      where: {
+        groupId,
+        Vote: {
+          some: {
+            vote: 1,
+          },
+        },
+      },
+      include: {
+        Vote: true,
+      },
+      orderBy: {
+        Vote: {
+          _count: "desc",
+        },
+      },
+    });
+
+    return topRatedActivities;
+  }),
+
 });

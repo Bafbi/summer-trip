@@ -72,6 +72,7 @@ const AppPage = (props: { groupId: string; } ) => {
           {page === "chat" && <ChatComponent groupId={groupId} />}
           {page === "planning" && <PlanningComponent groupId={groupId} />}
           {page === "activity" && <ActivityComponent groupId={groupId}/>}
+          
         </main>
 
         {/* Footer */}

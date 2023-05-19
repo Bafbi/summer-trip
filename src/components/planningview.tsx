@@ -11,13 +11,18 @@ const PlanningView: React.FC<{ groupId: string }> = ({ groupId }) => {
   const { data: planningData } = api.planning.getEvents.useQuery({
     groupId,
   });
+  const { data: topRatedActivitiesData } = api.activity.getTopRatedActivities.useQuery({
+    groupId,
+  });
 
+  
   const {mutate} = api.planning.generatePlaning.useMutation({
     onSuccess: () => {
       console.log("Planning généré");
+      
     },
   });
-
+  
 
   return (
       <main className="h-full">

@@ -57,3 +57,42 @@ export const addPhoto = async (photoId: string) => {
 
   return photo;
 };
+export const getTopLikedActivitiesByGroupId = async (groupId: string, limit: number) => {
+  const activities = await prisma.activity.findMany({
+    where: {
+      groupId: groupId,
+    },
+    include: {
+      place: {
+        include: {
+          photos: {
+            take: 1,
+          },
+          types: true,
+          location: true,
+        },
+      },
+      Vote: {
+        where: {
+          vote: {
+            equals: 1, // Vote positif
+          },
+        },
+      },
+      group: {
+        select: {
+          startDate: true,
+          endDate: true,
+        },
+      },
+    },
+    orderBy: {
+      Vote: {
+        vote: 'desc', // Trier par vote décroissant
+      },
+    },
+    take: limit, // Limiter le nombre de résultats
+  });
+
+  return activities;
+};
