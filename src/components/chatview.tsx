@@ -130,7 +130,7 @@ const ChatView: React.FC<{ groupId: string }> = ({ groupId }) => {
             onChange={(e) => setInput(e.target.value)}
             type="text"
             placeholder="Type a message..."
-            className="zoneText flex-grow rounded-lg bg-gray-100 font-semibold px-9 py-5 focus:outline-none"
+            className="zoneText flex-grow rounded-lg bg-gray-100 font-semibold px-3 py-5 focus:outline-none"
           />
           <button
             type="submit"
