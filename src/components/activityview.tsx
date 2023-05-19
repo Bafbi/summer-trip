@@ -3,15 +3,20 @@ import { FaHeart, FaTimes } from 'react-icons/fa';
 import { Activity } from "@prisma/client";
 import { api } from "~/utils/api";
 
+
+
 const ActivityComponent: React.FC<{ groupId: string }> = ({ groupId }) => {
+const activityId = groupId;
+  const { mutate: rateActivity } = api.activity.rateActivity.useMutation();
   const [activities, setActivities] = useState<Activity[]>([]);
   const [currentActivity, setCurrentActivity] = useState<Activity | null>(null);
+  
   
   const { data: activityData } = api.activity.getActivitiesByGroupId.useQuery({
     groupId,
   });
-  
 
+  
   useEffect(() => {
     if (activityData) {
       setActivities(activityData);
@@ -24,10 +29,22 @@ const ActivityComponent: React.FC<{ groupId: string }> = ({ groupId }) => {
     const nextIndex = (currentIndex + 1) % activities.length;
     setCurrentActivity(activities[nextIndex]);
   };
+  const handleLike = () => {
+    rateActivity({ activityId: currentActivity.id, rating: 1 });
+    handleNextActivity();
+  };
+
+  const handleDislike = () => {
+    rateActivity({ activityId: currentActivity.id, rating: -1 });
+    handleNextActivity();
+  };
+
+  
 
   if (!currentActivity) {
     return <div>Loading...</div>;
   }
+
 
   return (
     <div>
@@ -36,10 +53,10 @@ const ActivityComponent: React.FC<{ groupId: string }> = ({ groupId }) => {
         <h3>{currentActivity.place.name}</h3> 
       </div>
       <div>
-        <button onClick={handleNextActivity} className="w-24 h-24 rounded-full bg-[#1E5552] text-white flex justify-center items-center">
+        <button onClick={handleDislike} className="w-24 h-24 rounded-full bg-[#1E5552] text-white flex justify-center items-center">
           <FaTimes className="h-8 w-8" />
         </button>
-        <button onClick={handleNextActivity} className="w-24 h-24 rounded-full bg-red-500 text-white flex justify-center items-center ml-6">
+        <button onClick={handleLike} className="w-24 h-24 rounded-full bg-red-500 text-white flex justify-center items-center ml-6">
           <FaHeart className="h-8 w-8" />
         </button>
       </div>
