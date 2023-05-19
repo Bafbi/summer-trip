@@ -2,7 +2,8 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
 
 datasource db {
@@ -28,6 +29,7 @@ model Group {
   Activities      Activity[]
   Message         Chat[]
   Planning        Planning[]
+  InviteLink      InviteLink[]
 
   @@index([latLngLiteralId])
 }
@@ -88,9 +90,9 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String       @id @default(cuid())
   name          String?
-  email         String?   @unique
+  email         String?      @unique
   emailVerified DateTime?
   image         String?
   accounts      Account[]
@@ -98,6 +100,10 @@ model User {
   groups        Group[]
   message       Chat[]
   Vote          Vote[]
+  UsedLink      InviteLink[]
+
+  @@fulltext([name])
+  @@fulltext([email])
 }
 
 model VerificationToken {
@@ -125,7 +131,7 @@ model Chat {
 model Place {
   id                       String                 @id @default(uuid())
   partial                  Boolean                @default(true)
-  placeId                  String?                @unique // id from Google Places API
+  placeId                  String? // id from Google Places API
   name                     String?
   location                 LatLngLiteral?         @relation(fields: [latLngLiteralId], references: [id]) // coordinates 
   json                     Json? // raw json from Google Places API
@@ -173,7 +179,7 @@ model PlacePhoto {
   height         Int
   photoReference String  @unique
   width          Int
-  blob           String?
+  blob           String? @db.Text // base64 encoded image data 
   place          Place[]
 }
 
@@ -213,4 +219,18 @@ model Planning {
 
   @@index([groupId])
   @@index([activityId])
+}
+
+model InviteLink {
+  id        String   @id @default(cuid())
+  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  groupId   String
+  link      String   @unique
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  maxUses   Int
+  used      Int      @default(0)
+  usedBy    User[]
+
+  @@index([groupId])
 }

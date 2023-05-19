@@ -1,9 +1,8 @@
-import { useEffect, useRef, useState } from "react";
-import { type RouterOutputs, api } from "~/utils/api";
 import { useSession } from "next-auth/react";
 import Pusher from "pusher-js";
+import { useEffect, useRef, useState } from "react";
 import { env } from "~/env.mjs";
-import Image from "next/image";
+import { api, type RouterOutputs } from "~/utils/api";
 
 const pusher = new Pusher(env.NEXT_PUBLIC_PUSHER_KEY, {
   cluster: "eu",

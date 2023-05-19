@@ -1,11 +1,24 @@
-import { NextPage } from "next";
+import { type NextPage } from "next";
+import Head from "next/head";
+import { useState } from "react";
+import { FaArrowLeft } from "react-icons/fa";
+import { AppHeader } from "~/components/header";
 
-const AppSettingsPage: NextPage = () => {
+const SettingsPage: NextPage = () => {
+  
+
   return (
-    <div>
-      <h1>App Settings</h1>
-    </div>
+    <>
+      <Head>
+        <title>Summer-Trip | Settings</title>
+      </Head>
+      <AppHeader groupId="" groupName="Settings" />
+      <main className="h-screen bg-[#405340] px-4 pt-8 ">
+        <h1 className="text-xl pl-20"> EN TRAVAUX </h1>
+      </main>
+      
+    </>
   );
 };
 
-export default AppSettingsPage;
+export default SettingsPage;

@@ -1,9 +1,11 @@
 import { z } from "zod";
 
 import {
-  createTRPCRouter, protectedProcedure
+  createTRPCRouter,
+  protectedProcedure
 } from "~/server/api/trpc";
-import { addPhoto, getActivitiesByGroupId } from "~/server/utils/activity";
+import { getActivitiesByGroupId } from "~/server/utils/activity";
+import { getActivityPhoto } from "~/server/utils/place";
 
 export const activityRouter = createTRPCRouter({
   rateActivity: protectedProcedure
@@ -32,37 +34,57 @@ export const activityRouter = createTRPCRouter({
       return getActivitiesByGroupId(input.groupId);
     }),
 
-  getMainPhoto: protectedProcedure
-    .input(z.object({ activityId: z.string() }))
-    .query(async ({ input, ctx }) => {
-      const activity = await ctx.prisma.activity.findUnique({
+  getActivityToRate: protectedProcedure
+    .input(z.object({ groupId: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const activities = await ctx.prisma.activity.findMany({
         where: {
-          id: input.activityId,
+          groupId: input.groupId,
+          Vote: {
+            none: {
+              user: {
+                id: ctx.session?.user?.id,
+              },
+            },
+          },
         },
         include: {
           place: {
-            select: {
+            include: {
+              types: true,
               photos: {
                 take: 1,
-              }
-            }, 
+                where: {
+                  main: true,
+                },
+              },
+            },
           },
         },
+        
       });
 
+      const activity = activities[Math.floor(Math.random() * activities.length)];
+      
+
       if (!activity) {
-        throw new Error("Activity not found");
+        throw new Error("No activity to rate");
       }
 
       if (!activity.place.photos[0]) {
         throw new Error("Photo not found");
       }
 
-      if (activity.place.photos[0].blob) return activity.place.photos[0].blob;
+      const photo = (await getActivityPhoto(
+        activity.place.photos[0].photoReference
+      )).toString("base64");
 
-      const blob = await addPhoto(activity.place.photos[0].id);
+      return {
+        ...activity,
+        photo,
+      };
+    }),
 
-      return blob;
-    }
-  ),
+
+ 
 });
