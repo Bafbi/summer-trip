@@ -92,7 +92,7 @@ const ChatView: React.FC<{ groupId: string }> = ({ groupId }) => {
                 <>
                   <div className="flex items-center">
                     <img
-                      className="w-12 h-12 rounded-full mr-2"
+                      className="w-11 h-11 rounded-full mr-2"
                       src={message?.sender.image ?? ""}
                       alt="User Profile"
                     />
@@ -112,7 +112,7 @@ const ChatView: React.FC<{ groupId: string }> = ({ groupId }) => {
                       {message?.sender.name}
                     </h1>
                     <img
-                      className="w-12 h-12 rounded-full mt-2 ml-2"
+                      className="w-11 h-11 rounded-full mt-2 ml-2"
                       src={sessionData?.user.image ?? ""}
                       alt="User Profile"
                     />
