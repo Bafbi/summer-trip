@@ -96,27 +96,32 @@ const ChatView: React.FC<{ groupId: string }> = ({ groupId }) => {
                       src={message?.sender.image ?? ""}
                       alt="User Profile"
                     />
-                    <h1 className="text-[#1CCDB3] text-2xl font-bold">
+                    <h1 className="text-[#1CCDB3] text-xl font-bold">
                       {message?.sender.name}
                     </h1>
                   </div>
+                  <p className="text-gray-300 text-left text-xl px-16 font-semibold">
+                    {message?.content}
+                  </p>
                 </>
               )}
               {message?.sender.name === sessionData?.user.name && (
-                <div className="flex items-center justify-end">
-                  <h1 className="text-[#E49A0A] text-2xl font-bold">
-                    {message?.sender.name}
-                  </h1>
-                  <img
-                    className="w-12 h-12 rounded-full mt-2 ml-2"
-                    src={sessionData?.user.image ?? ""}
-                    alt="User Profile"
-                  />
-                </div>
+                <>
+                  <div className="flex items-center justify-end">
+                    <h1 className="text-[#E49A0A] text-xl font-bold">
+                      {message?.sender.name}
+                    </h1>
+                    <img
+                      className="w-12 h-12 rounded-full mt-2 ml-2"
+                      src={sessionData?.user.image ?? ""}
+                      alt="User Profile"
+                    />
+                  </div>
+                  <p className="text-gray-300 text-right text-xl px-16 font-semibold">
+                    {message?.content}
+                  </p>
+                </>
               )}
-              <p className="text-gray-300 text-2xl px-16 font-semibold">
-                {message?.content}
-              </p>
             </div>
           ))}
         </div>
