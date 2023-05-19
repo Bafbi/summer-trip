@@ -132,7 +132,7 @@ const GroupsPage: NextPage = () => {
                   text-gray-300 px-3 py-2"
                   value={groupName}
                   onChange={(e) => setGroupName(e.target.value)}
-                  required
+                  required={true}
                 />
               </div>
               <div className="mb-4">
@@ -150,7 +150,7 @@ const GroupsPage: NextPage = () => {
                   maxLength={140}
                   placeholder="Décris ton séjour en quelques mots ! (140 caractères max)"
                   onChange={(e) => setGroupDescription(e.target.value)}
-                  required
+                  required={true}
                 />
               </div>
               <div className="mb-4">
@@ -169,7 +169,7 @@ const GroupsPage: NextPage = () => {
                   text-gray-300 px-3 py-2 min-height:20px"
                   value={placeName}
                   onChange={(e) => setPlaceName(e.target.value)}
-                  required
+                  required={true}
                 />
               </div>
               <p className="text-m font-light text-left text-[#E49A0A] my-4">
@@ -186,7 +186,7 @@ const GroupsPage: NextPage = () => {
                   className="w-full rounded-md border border-[#E49A0A] bg-[#40534D] border-solid text-gray-400 px-3 py-2"
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
-                  required
+                  required={true}
                 />
               </div>
               
@@ -200,7 +200,7 @@ const GroupsPage: NextPage = () => {
                   className="w-full rounded-md border border-[#E49A0A] bg-[#40534D] border-solid text-gray-400 px-3 py-2"
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
-                  required
+                  required={true}
                 />
               </div>
               <div className="flex justify-end">
