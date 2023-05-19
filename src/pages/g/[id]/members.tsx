@@ -3,10 +3,11 @@ import { router } from "@trpc/server";
 import { type NextPage, type GetStaticPaths, type GetStaticProps } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { FaTimes, FaCopy } from "react-icons/fa";
 import { AppHeader } from "~/components/header";
 import { type RouterOutputs, api } from "~/utils/api";
+import QRCode from "react-qr-code";
 
 export const getStaticProps: GetStaticProps = (context) => {
   const groupId = context.params?.id as string;
@@ -60,15 +61,21 @@ const GroupMembersPage: NextPage<{ groupId: string }> = ({ groupId }) => {
   }, [invitationLinkData]);
 
   const router = useRouter();
-  ///
+  const [showQRCodeModal, setShowQRCodeModal] = useState(false);
+  const [qrCodeUrl, setQRCodeUrl] = useState("");
 
   const copyToClipboard = (text) => {
-    const textField = document.createElement('textarea');
+    const textField = document.createElement("textarea");
     textField.innerText = text;
     document.body.appendChild(textField);
     textField.select();
-    document.execCommand('copy');
+    document.execCommand("copy");
     textField.remove();
+  };
+
+  const showQRCodeHandler = (url) => {
+    setShowQRCodeModal(true);
+    setQRCodeUrl(url);
   };
 
   return (
@@ -77,15 +84,20 @@ const GroupMembersPage: NextPage<{ groupId: string }> = ({ groupId }) => {
         <title>{`Summer-Trip | Group members`}</title>
       </Head>
       <AppHeader groupId={groupId} groupName="Members" />
-      <main className="h-screen  bg-[#405340] px-4 pt-8 ">
-        <div id="membersList" className="border-2 border-[#E49A0A] rounded-lg p-4 mb-4">
-          <h2 className="text-center  text-primary">Group members list</h2>
-          <ul className="mt-4  text-primary">
+      <main className="h-screen bg-[#405340] px-4 pt-8 ">
+        <div
+          id="membersList"
+          className="border-2 border-[#E49A0A] rounded-lg p-4 mb-4"
+        >
+          <h2 className="text-center text-primary">Group members list</h2>
+          <ul className="mt-4 text-primary">
             {members ? (
               members.map((member, index) => (
                 <li
                   key={member.id}
-                  className={`item-center flex justify-between px-4 py-2 ${index !== members.length - 1 ? 'border-b border-[#E49A0A]' : ''}`}
+                  className={`item-center flex justify-between px-4 py-2 ${
+                    index !== members.length - 1 ? "border-b border-[#E49A0A]" : ""
+                  }`}
                 >
                   <span>{member.name}</span>
                   <button
@@ -109,20 +121,38 @@ const GroupMembersPage: NextPage<{ groupId: string }> = ({ groupId }) => {
           >
             Generate invitation links
           </button>
-          <ul className="mt-4  text-primary">
+          <ul className="mt-4 text-primary">
             {invitationLinks ? (
               invitationLinks.map((inviteLink, index) => (
                 <li
                   key={inviteLink.id}
-                  className="item-center flex justify-between  py-2"
+                  className="item-center flex justify-between py-2"
                 >
-                  <span className="text-sm sm:text-base">{`https://summertrip.fr${router.basePath}/i/${inviteLink.link}`}</span>
+                  <div className="flex items-center">
+                    <span className="text-xs sm:text-base">
+                      {`https://summertrip.fr${router.basePath}/i/${inviteLink.link}`}
+                    </span>
+                    <button
+                      onClick={() =>
+                        copyToClipboard(
+                          `https://summertrip.fr${router.basePath}/i/${inviteLink.link}`
+                        )
+                      }
+                      className="ml-2"
+                    >
+                      <FaCopy className="h-4 w-4 text-primary" />
+                    </button>
+                  </div>
                   <div>
-                    
-                      <button onClick={() => copyToClipboard(`https://summertrip.fr${router.basePath}/i/${inviteLink.link}`)}>
-                        <FaCopy className="h-4 w-4 text-primary" />
-                      </button>
-                    
+                    <button
+                      onClick={() =>
+                        showQRCodeHandler(
+                          `https://summertrip.fr${router.basePath}/i/${inviteLink.link}`
+                        )
+                      }
+                    >
+                      QR Code
+                    </button>
                   </div>
                 </li>
               ))
@@ -133,6 +163,20 @@ const GroupMembersPage: NextPage<{ groupId: string }> = ({ groupId }) => {
             )}
           </ul>
         </div>
+        {showQRCodeModal && (
+          <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
+            <div className="bg-[#E49A0A] p-4 rounded-lg max-w-md max-h-80vh overflow-y-auto text-center">
+              <h3 className=" text-[#1E5552] text-lg font-bold mb-4">QR Code</h3>
+              <QRCode value={qrCodeUrl} size={200} />
+              <button
+                className="text-[#E49A0A] hover:text-gray-700 absolute top-4 right-4"
+                onClick={() => setShowQRCodeModal(false)}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        )}
       </main>
     </>
   );

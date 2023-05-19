@@ -4,10 +4,12 @@ import React from "react";
 import { AppDropMenu } from "~/components/dropMenu";
 import {GroupDropMenu} from "~/components/dropMenu";
 import {useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 
 export const AppHeader = (props: { groupId: string, groupName: string }) => {
   
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const router = useRouter();
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   
@@ -18,10 +20,10 @@ export const AppHeader = (props: { groupId: string, groupName: string }) => {
       {/* Header */}
       <header className="">
         <div className="flex h-16 items-center justify-between bg-[#1E5552] px-4 text-[#E49A0A]">
-          <Link href="/g">
+         
             <button
               className="text-[#E49A0A] hover:text-gray-300 focus:outline-none"
-              onClick={() => console.log("back")}
+              onClick={() => router.back()} 
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -36,7 +38,7 @@ export const AppHeader = (props: { groupId: string, groupName: string }) => {
                 />
               </svg>
             </button>
-          </Link>
+          
           <h1 className="text-xl font-bold">{props.groupName}</h1>
           <button
             className="text-[#E49A0A] hover:text-[#E49A0A] focus:outline-none"

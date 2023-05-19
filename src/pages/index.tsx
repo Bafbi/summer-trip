@@ -30,7 +30,7 @@ const Home: NextPage = () => {
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-center bg-[#1E5552]">
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-          <h1 className="font-bold text-4xl">SUMMER TRIP</h1>
+          <h1 className="font-bold text-4xl text-[#E49A0A]">SUMMER TRIP</h1>
           <Image
                 className=""
                 src={"/logo.svg"}
