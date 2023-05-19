@@ -39,16 +39,19 @@ const GroupsPage: NextPage = () => {
     setShowForm(true);
   };
 
+  const { mutate: createGroup } = api.group.create.useMutation({
+    onSuccess: () => {
+      setShowForm(false);
+      setIsExpanded(false);
+      setGroupName("");
+      setGroupDescription("");
+    },
+  });
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // Vérifier si les champs du formulaire sont valides
-
-    // Effectuer une action pour créer le groupe en utilisant les valeurs de groupName et groupDescription
-
-    // Réinitialiser les valeurs des champs du formulaire
-    setGroupName("");
-    setGroupDescription("");
+    createGroup({ name: groupName, description: groupDescription, location: "Lille" });
   };
 
   const handleCancel = () => {

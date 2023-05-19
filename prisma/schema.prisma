@@ -131,7 +131,7 @@ model Chat {
 model Place {
   id                       String                 @id @default(uuid())
   partial                  Boolean                @default(true)
-  placeId                  String?                @unique // id from Google Places API
+  placeId                  String? // id from Google Places API
   name                     String?
   location                 LatLngLiteral?         @relation(fields: [latLngLiteralId], references: [id]) // coordinates 
   json                     Json? // raw json from Google Places API
@@ -179,7 +179,7 @@ model PlacePhoto {
   height         Int
   photoReference String  @unique
   width          Int
-  blob           String?
+  blob           String? @db.Text // base64 encoded image data 
   place          Place[]
 }
 

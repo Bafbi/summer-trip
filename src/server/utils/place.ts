@@ -1,6 +1,7 @@
 import { maps } from "~/server/map";
 import { env } from "~/env.mjs";
 import { map } from "@trpc/server/observable";
+import { Stream } from "stream";
 
 // get activity by location with google place api
 export const findNewActivities = async (coordinates: {lat: number, lng: number}) => {
@@ -61,11 +62,11 @@ export const getActivityPhoto = async (photoReference: string) => {
   const photo = await maps.placePhoto({
     params: {
       photoreference: photoReference,
-      maxheight: 1600,
-      maxwidth: 1600,
+      maxheight: 800,
+      maxwidth: 800,
       key: env.GOOGLE_PLACES_API_KEY,
     },
-    responseType: "arraybuffer",
+    responseType: 'arraybuffer',
   });
 
   if (photo.status !== 200) {

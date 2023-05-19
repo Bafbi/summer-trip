@@ -1,11 +1,15 @@
-import { type Prisma } from "@prisma/client";
+import { Type, type Prisma } from "@prisma/client";
 import { z } from "zod";
 
 import { env } from "~/env.mjs";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { prisma } from "~/server/db";
-import { findNewActivities, getLocation } from "../../utils/place";
+import {
+  findNewActivities,
+  getActivityPhoto,
+  getLocation,
+} from "../../utils/place";
 import dayjs from "dayjs";
 
 export const groupRouter = createTRPCRouter({
@@ -40,38 +44,37 @@ export const groupRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      const coordinates = await getLocation(input.location);
+      try {
+        const coordinates = await getLocation(input.location);
 
-      const group = await ctx.prisma.group.create({
-        data: {
-          name: input.name,
-          description: input.description,
-          destination: input.location,
-          location: {
-            create: {
-              lat: coordinates.lat,
-              lng: coordinates.lng,
+        const group = await ctx.prisma.group.create({
+          data: {
+            name: input.name,
+            description: input.description,
+            destination: input.location,
+            location: {
+              create: {
+                lat: coordinates.lat,
+                lng: coordinates.lng,
+              },
+            },
+            members: {
+              connect: {
+                id: ctx.session?.user?.id,
+              },
             },
           },
-          members: {
-            connect: {
-              id: ctx.session?.user?.id,
-            },
-          },
-        },
-      });
+        });
 
-      const activities = await findNewActivities(coordinates);
+        const activities = await findNewActivities(coordinates);
 
-      activities.map(async (activity) => {
-        if (!activity.types) return;
-        if (!activity.geometry) return;
-        if (!activity.photos) return;
-        if (!activity.photos[0]) return;
+        const typePromises = activities.flatMap((activity) => {
+          if (!activity.types) {
+            return [];
+          }
 
-        const types = await ctx.prisma.$transaction(
-          activity.types.map((type) => {
-            return prisma.type.upsert({
+          return activity.types.map((type) => {
+            return ctx.prisma.type.upsert({
               where: {
                 category: type.toString(),
               },
@@ -82,56 +85,94 @@ export const groupRouter = createTRPCRouter({
                 category: type.toString(),
               },
             });
-          })
-        );
+          });
+        });
 
-        await ctx.prisma.place.create({
-          data: {
-            placeId: activity.place_id,
-            name: activity.name,
-            vicinity: activity.vicinity,
-            businessStatus: activity.business_status,
-            rating: activity.rating,
-            userRatingsTotal: activity.user_ratings_total,
-            priceLevel: activity.price_level,
-            formattedAddress: activity.formatted_address,
-            internationalPhoneNumber: activity.international_phone_number,
-            website: activity.website,
-            url: activity.url,
-            openingHours:
-              activity.opening_hours as unknown as Prisma.JsonObject,
-            json: activity as unknown as Prisma.JsonObject,
-            location: {
-              create: {
-                lat: activity.geometry.location.lat,
-                lng: activity.geometry.location.lng,
-              },
-            },
-            types: {
-              connect: types.map((type) => {
-                return { id: type.id };
-              }),
-            },
-            photos: {
-              create: {
+        const photosPromises = activities.flatMap((activity) => {
+          if (!activity.photos) {
+            return [];
+          }
+        
+          return activity.photos.map((photo) => {
+            return ctx.prisma.placePhoto.create({
+              data: {
+                photoReference: photo.photo_reference,
+                width: photo.width,
+                height: photo.height,
                 main: true,
-                photoReference: activity.photos[0]?.photo_reference,
-                height: activity.photos[0]?.height,
-                width: activity.photos[0]?.width,
               },
-            },
-            activity: {
-              create: {
-                group: {
-                  connect: {
-                    id: group.id,
+            });
+          });
+        });
+
+        const createdPhotos = await Promise.all(photosPromises);
+        const createdTypes = await Promise.all(typePromises);
+
+        for (let i = 0; i < activities.length; i++) {
+          const activity = activities[i];
+          const photo = createdPhotos[i];
+
+          if (!activity || !activity.types || !activity.geometry || !photo) {
+            continue;
+          }
+
+          const types = createdTypes.filter((type) => {
+            return activity.types?.some((activityType) => {
+              return type.category === activityType;
+            });
+          });
+
+          const place = await ctx.prisma.place.create({
+            data: {
+              placeId: activity.place_id,
+              name: activity.name,
+              vicinity: activity.vicinity,
+              businessStatus: activity.business_status,
+              rating: activity.rating,
+              userRatingsTotal: activity.user_ratings_total,
+              priceLevel: activity.price_level,
+              formattedAddress: activity.formatted_address,
+              internationalPhoneNumber: activity.international_phone_number,
+              website: activity.website,
+              url: activity.url,
+              openingHours:
+                activity.opening_hours as unknown as Prisma.JsonObject,
+              json: activity as unknown as Prisma.JsonObject,
+              location: {
+                create: {
+                  lat: activity.geometry.location.lat,
+                  lng: activity.geometry.location.lng,
+                },
+              },
+              photos: {
+                connect: {
+                  id: photo.id,
+                }
+              },
+              types: {
+                connect: types.map((type) => {
+                  return { id: type.id };
+                }),
+              },
+              activity: {
+                create: {
+                  group: {
+                    connect: {
+                      id: group.id,
+                    },
                   },
                 },
               },
             },
-          },
-        });
-      });
+          });
+        }
+      } catch (error) {
+        // Handle errors appropriately
+        console.error(error);
+        throw new Error(
+          "An error occurred during group creation and activity fetching."
+        );
+      }
     }),
 
   getMembers: protectedProcedure
