@@ -71,8 +71,7 @@ const ChatView: React.FC<{ groupId: string }> = ({ groupId }) => {
   }, [messages]);
 
   return (
-    <div className="page flex flex-col items-center justify-center py-0 px-0">
-      <div className="max-w-md max-h-md rounded-lg bg-[#405340] shadow-lg">
+      <div className="max-w-full max-h-fit rounded-lg bg-[#405340]">
         <div className="messages flex flex-col items-center justify-center gap-12 px-300 py-2">
           {messages.map((message, i) => (
             <div
@@ -145,7 +144,6 @@ const ChatView: React.FC<{ groupId: string }> = ({ groupId }) => {
           </button>
         </form>
       </div>
-    </div>
   );
 };
 
