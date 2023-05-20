@@ -21,17 +21,11 @@ const ActivityComponent: React.FC<{ groupId: string }> = ({ groupId }) => {
     handleNextActivity(); // Call handleNextActivity once when the component loads
   }, []); // Empty dependency array to ensure it runs only once on mount
 
-  const handleLike = () => {
-    if (!activity) return;
-    // Implement your logic to rate the activity on the server
-    handleNextActivity();
-  };
-
-  const handleDislike = () => {
-    if (!activity) return;
-    // Implement your logic to rate the activity on the server
-    handleNextActivity();
-  };
+  const { mutate: rateActivity } = api.activity.rateActivity.useMutation({
+    onSuccess: () => {
+      handleNextActivity();
+    },
+  });
 
   return (
     <div>
@@ -60,13 +54,15 @@ const ActivityComponent: React.FC<{ groupId: string }> = ({ groupId }) => {
       </div>
       <div>
         <button
-          onClick={handleDislike}
+          {...(activity ? {} : { disabled: true })}
+          onClick={() => rateActivity({ activityId: activity?.id as string, rating: -1 })}
           className="flex h-24 w-24 items-center justify-center rounded-full bg-[#1E5552] text-white"
         >
           <FaTimes className="h-8 w-8" />
         </button>
         <button
-          onClick={handleLike}
+          {...(activity ? {} : { disabled: true })}
+          onClick={() => rateActivity({ activityId: activity?.id as string, rating: 1 })}
           className="ml-6 flex h-24 w-24 items-center justify-center rounded-full bg-red-500 text-white"
         >
           <FaHeart className="h-8 w-8" />
