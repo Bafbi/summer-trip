@@ -79,7 +79,7 @@ const ChatView: React.FC<{ groupId: string }> = ({ groupId }) => {
                 message?.sender.name === sessionData?.user.name
                   ? "items-end"
                   : "items-start"
-              } justify-start gap-2 px-4 py-2 ${
+              } justify-start gap-2 px-2 py-2 ${
                 message?.sender.name === sessionData?.user.name
                   ? "self-end"
                   : "self-start"
