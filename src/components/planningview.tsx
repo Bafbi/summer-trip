@@ -1,14 +1,21 @@
-import { Calendar, EventProps, HeaderProps, dayjsLocalizer, DayPropGetter } from "react-big-calendar";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
-import { FaTimes } from "react-icons/fa";
-import { type RouterOutputs, api } from "~/utils/api";
+import {
+  Calendar,
+  DayPropGetter,
+  EventProps,
+  HeaderProps,
+  ToolbarProps,
+  dayjsLocalizer,
+} from "react-big-calendar";
+import { api, type RouterOutputs } from "~/utils/api";
 
 const localizer = dayjsLocalizer(dayjs);
 
 const PlanningView: React.FC<{ groupId: string }> = ({ groupId }) => {
-  
-  const [events, setEvents] = useState<RouterOutputs["planning"]["getEvents"]>([]);
+  const [events, setEvents] = useState<RouterOutputs["planning"]["getEvents"]>(
+    []
+  );
 
   const { data: planningData } = api.planning.getEvents.useQuery({
     groupId,
@@ -27,19 +34,19 @@ const PlanningView: React.FC<{ groupId: string }> = ({ groupId }) => {
   });
 
   const getDayProps: DayPropGetter = (date: Date) => {
-    const isCurrentDay = dayjs(date).isSame(new Date(), 'day');
-    const backgroundColor = isCurrentDay ? '#E49A0A' : ''; // Set the color for the current day
-    
+    const isCurrentDay = dayjs(date).isSame(new Date(), "day");
+    const backgroundColor = isCurrentDay ? "#E49A0A" : ""; // Set the color for the current day
+
     return {
       style: {
-        backgroundColor: backgroundColor
-      }
+        backgroundColor: backgroundColor,
+      },
     };
   };
 
   return (
-    <div className="h-screen flex flex-col">
-      <div className="h-full flex-grow relative">
+    <div className="flex h-screen flex-col">
+      <div className="relative h-full flex-grow">
         <Calendar
           localizer={localizer}
           events={events.map((event) => {
@@ -47,9 +54,9 @@ const PlanningView: React.FC<{ groupId: string }> = ({ groupId }) => {
               title: event.activity.place.name,
               start: event.start,
               end: event.end,
-            }
+            };
           })}
-          defaultView='week'
+          defaultView="week"
           toolbar={true}
           views={{
             month: false,
@@ -72,8 +79,11 @@ const PlanningView: React.FC<{ groupId: string }> = ({ groupId }) => {
           dayPropGetter={getDayProps}
         />
       </div>
-      <div className="bottom-10 pl-60 sticky">
-        <button className="bg-[#1E5552] bg-opacity-80 text-[#E49A0A] px-4 pb-2  rounded-md" onClick={() => mutate({groupId})}>
+      <div className="sticky bottom-10 pl-60">
+        <button
+          className="rounded-md bg-[#1E5552] bg-opacity-80 px-4 pb-2  text-[#E49A0A]"
+          onClick={() => mutate({ groupId })}
+        >
           New planning
         </button>
       </div>
@@ -86,33 +96,32 @@ const CustomToolbar = (toolbarProps: ToolbarProps) => {
   const { label, onView, onNavigate, views } = toolbarProps;
 
   return (
-    <div className="flex justify-between items-center bg-[#E49A0A] px-4 py-2">
+    <div className="flex items-center justify-between bg-[#E49A0A] px-4 py-2">
       <div className="text-sm font-bold">{label}</div>
-      <div className="space-x-2 flex">
+      <div className="flex space-x-2">
         {views.map((view) => (
           <button
             key={view}
-            className="px-3 py-1 rounded-md bg-[#1E5552] text-[#E49A0A] hover:text-[#1CCDB3]"
+            className="rounded-md bg-[#1E5552] px-3 py-1 text-[#E49A0A] hover:text-[#1CCDB3]"
             onClick={() => onView(view)}
           >
             {view}
           </button>
         ))}
         <button
-          className="px-3 py-1 rounded-md bg-[#1E5552] text-[#E49A0A] hover:text-[#1CCDB3]"
+          className="rounded-md bg-[#1E5552] px-3 py-1 text-[#E49A0A] hover:text-[#1CCDB3]"
           onClick={() => onNavigate("PREV")}
         >
           &lt;
         </button>
         <button
-          className="px-3 py-1 rounded-md bg-[#1E5552] text-[#E49A0A] hover:text-[#1CCDB3]"
+          className="rounded-md bg-[#1E5552] px-3 py-1 text-[#E49A0A] hover:text-[#1CCDB3]"
           onClick={() => onNavigate("NEXT")}
         >
           &gt;
         </button>
       </div>
     </div>
-    
   );
 };
 
@@ -121,9 +130,7 @@ const CustomWeekView = (headerProps: HeaderProps) => {
   const formattedDate = dayjs(headerProps.date).format("dddd");
   const shortDay = formattedDate.substring(0, 3);
 
-  return (
-    <div className="text-gray-800 font-bold my-2 text-sm">{shortDay}</div>
-  );
+  return <div className="my-2 text-sm font-bold text-gray-800">{shortDay}</div>;
 };
 
 // Composant personnalisé pour l'en-tête de la journée
@@ -131,7 +138,7 @@ const CustomDayView = (headerProps: HeaderProps) => {
   const formattedDate = dayjs(headerProps.date).format("MMMM Do, YYYY");
   return (
     <div className="p-4">
-      <div className="text-gray-800 font-bold mb-2">{formattedDate}</div>
+      <div className="mb-2 font-bold text-gray-800">{formattedDate}</div>
     </div>
   );
 };
@@ -140,11 +147,12 @@ const CustomDayView = (headerProps: HeaderProps) => {
 // Composant personnalisé pour les événements de l'agenda
 const CustomAgendaEvent = (eventProps: EventProps) => {
   return (
-    <div className="p-2 bg-[#E49A0A] text-[#1E5552] border border-[#E49A0A] rounded-md">
-      <span className="font-bold">{eventProps.event.title?.toLocaleString()}</span>
+    <div className="rounded-md border border-[#E49A0A] bg-[#E49A0A] p-2 text-[#1E5552]">
+      <span className="font-bold">
+        {eventProps.event.title?.toLocaleString()}
+      </span>
     </div>
   );
 };
-
 
 export default PlanningView;
