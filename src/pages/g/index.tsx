@@ -53,7 +53,7 @@ const GroupsPage: NextPage = () => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    createGroup({ name: groupName, description: groupDescription, location: "Lille" });
+    createGroup({ name: groupName, description: groupDescription, location: placeName });
   };
 
   const handleCancel = () => {
