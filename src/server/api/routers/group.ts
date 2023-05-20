@@ -40,6 +40,8 @@ export const groupRouter = createTRPCRouter({
         name: z.string(),
         description: z.string(),
         location: z.string(),
+        start: z.date(),
+        end: z.date(),
       })
     )
     .mutation(async ({ input, ctx }) => {
@@ -51,6 +53,8 @@ export const groupRouter = createTRPCRouter({
             name: input.name,
             description: input.description,
             destination: input.location,
+            startDate: input.start,
+            endDate: input.end,
             location: {
               create: {
                 lat: coordinates.lat,

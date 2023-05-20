@@ -88,7 +88,7 @@ export const durees: {[key: string]: number} = {
   supermarket: 60,
   synagogue: 60,
   taxi_stand: 5,
-  tourist_attraction: 120,
+  tourist_attraction: 90,
   train_station: 60,
   transit_station: 30,
   travel_agency: 60,

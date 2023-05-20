@@ -28,8 +28,8 @@ const GroupsPage: NextPage = () => {
   const [groupName, setGroupName] = useState("");
   const [groupDescription, setGroupDescription] = useState("");
   const [placeName, setPlaceName] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -53,7 +53,7 @@ const GroupsPage: NextPage = () => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    createGroup({ name: groupName, description: groupDescription, location: "Lille" });
+    createGroup({ name: groupName, description: groupDescription, location: placeName, start: startDate, end: endDate });
   };
 
   const handleCancel = () => {
@@ -186,8 +186,8 @@ const GroupsPage: NextPage = () => {
                   type="date"
                   id="startDate"
                   className="w-full rounded-md border border-[#E49A0A] bg-[#40534D] border-solid text-gray-400 px-3 py-2"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
+                  value={startDate.toISOString().split("T")[0]}
+                  onChange={(e) => setStartDate(new Date(e.target.value))}
                   required={true}
                 />
               </div>
@@ -200,8 +200,8 @@ const GroupsPage: NextPage = () => {
                   type="date"
                   id="endDate"
                   className="w-full rounded-md border border-[#E49A0A] bg-[#40534D] border-solid text-gray-400 px-3 py-2"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
+                  value={endDate.toISOString().split("T")[0]}
+                  onChange={(e) => setEndDate(new Date(e.target.value))}
                   required={true}
                 />
               </div>
