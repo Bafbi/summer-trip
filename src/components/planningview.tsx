@@ -6,6 +6,7 @@ import {
   EventProps,
   HeaderProps,
   ToolbarProps,
+  View,
   dayjsLocalizer,
 } from "react-big-calendar";
 import { api, type RouterOutputs } from "~/utils/api";
@@ -93,30 +94,28 @@ const PlanningView: React.FC<{ groupId: string }> = ({ groupId }) => {
 
 // Composant personnalisé pour la barre d'outils
 const CustomToolbar = (toolbarProps: ToolbarProps) => {
-  const { label, onView, onNavigate, views } = toolbarProps;
-
   return (
     <div className="flex items-center justify-between bg-[#E49A0A] px-4 py-2">
-      <div className="text-sm font-bold">{label}</div>
+      <div className="text-sm font-bold">{toolbarProps.label}</div>
       <div className="flex space-x-2">
-        {views.map((view) => (
+      {(toolbarProps.views as View[]).map((view) => (
           <button
             key={view}
             className="rounded-md bg-[#1E5552] px-3 py-1 text-[#E49A0A] hover:text-[#1CCDB3]"
-            onClick={() => onView(view)}
+            onClick={() => toolbarProps.onView(view)}
           >
             {view}
           </button>
         ))}
         <button
           className="rounded-md bg-[#1E5552] px-3 py-1 text-[#E49A0A] hover:text-[#1CCDB3]"
-          onClick={() => onNavigate("PREV")}
+          onClick={() => toolbarProps.onNavigate("PREV")}
         >
           &lt;
         </button>
         <button
           className="rounded-md bg-[#1E5552] px-3 py-1 text-[#E49A0A] hover:text-[#1CCDB3]"
-          onClick={() => onNavigate("NEXT")}
+          onClick={() => toolbarProps.onNavigate("NEXT")}
         >
           &gt;
         </button>

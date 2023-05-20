@@ -1,10 +1,10 @@
 import dayjs from "dayjs";
+import { type } from "os";
 import { prisma } from "~/server/db";
 import { addPlanningEvents, type CalendarData } from "../utils/planning";
 import { durees } from "./duree";
-import { type } from "os";
 
-export const generatePlaning = async (groupID:string) => {
+export const generatePlaning = async (groupID: string) => {
   const topRatedActivities = await prisma.activity.findMany({
     where: {
       groupId: groupID,
@@ -21,7 +21,7 @@ export const generatePlaning = async (groupID:string) => {
           types: true,
           location: true,
         },
-      }
+      },
     },
     orderBy: {
       Vote: {
@@ -129,19 +129,20 @@ export const generatePlaning = async (groupID:string) => {
     "restaurant",
     "museum",
   ];
-  
+
   const topActivities = topRatedActivities.map((activity) => {
     const hours = activity.place.openingHours;
     const types = activity.place.types;
-let dureeTyp = 0;
-const sortedTypes = types?.sort((typeA, typeB) => {
-  const priorityA = typePriorities.indexOf(typeA.category);
-  const priorityB = typePriorities.indexOf(typeB.category);
-  return priorityB - priorityA;
-});
-if (sortedTypes && sortedTypes.length > 0) {
-  dureeTyp = durees[sortedTypes[0].category] || dureeTyp;
-}
+    let dureeTyp = 0;
+    const sortedTypes = types?.sort((typeA, typeB) => {
+      const priorityA = typePriorities.indexOf(typeA.category);
+      const priorityB = typePriorities.indexOf(typeB.category);
+      return priorityB - priorityA;
+    });
+
+    if (sortedTypes && sortedTypes[0]) {
+      dureeTyp = durees[sortedTypes[0].category] || dureeTyp;
+    }
 
     const { nom, type, lattitude, longitude, duree } = {
       nom: activity.place.name,
@@ -153,29 +154,33 @@ if (sortedTypes && sortedTypes.length > 0) {
     return { nom, type, lattitude, longitude, duree, id: activity.id };
   });
 
-  
-console.log(type);
+  console.log(type);
   const tmpPlanning: CalendarData[] = [];
-  
+
   let currentDate = dayjs();
 
   const randomInt = (min: number, max: number) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   };
-  
+
   topActivities.forEach((activity, index) => {
     // Wait between 1 and 3 hours before starting the activity
-    currentDate = currentDate.add(randomInt(1, 3), 'hours');
-  
+    currentDate = currentDate.add(randomInt(1, 3), "hours");
+
     // Adjust start time depending on the type of activity
-    let isRestaurant = activity.type?.find(type => type.category === 'restaurant');
-    let isPark = activity.type?.find(type => type.category === 'park');
-  
+    const isRestaurant = activity.type?.find(
+      (type) => type.category === "restaurant"
+    );
+    const isPark = activity.type?.find((type) => type.category === "park");
+
     if (isRestaurant) {
-      let currentHour = currentDate.hour();
-  
+      const currentHour = currentDate.hour();
+
       // If current hour is not within the desired range, adjust accordingly
-      if (!(currentHour >= 12 && currentHour < 14) && !(currentHour >= 19 && currentHour < 21)) {
+      if (
+        !(currentHour >= 12 && currentHour < 14) &&
+        !(currentHour >= 19 && currentHour < 21)
+      ) {
         // Set start time to the next nearest restaurant time slot
         if (currentHour < 12) {
           currentDate = currentDate.hour(12).minute(0);
@@ -183,12 +188,12 @@ console.log(type);
           currentDate = currentDate.hour(19).minute(0);
         } else {
           // If current time is past the evening slot, schedule the restaurant for the next day
-          currentDate = currentDate.add(1, 'day').hour(12).minute(0);
+          currentDate = currentDate.add(1, "day").hour(12).minute(0);
         }
       }
     } else if (isPark) {
-      let currentHour = currentDate.hour();
-  
+      const currentHour = currentDate.hour();
+
       // If current hour is not within the desired range, adjust accordingly
       if (!(currentHour >= 10 && currentHour < 19)) {
         // Set start time to the next nearest park time slot
@@ -196,45 +201,44 @@ console.log(type);
           currentDate = currentDate.hour(10).minute(0);
         } else {
           // If current time is past the park time, schedule the park for the next day
-          currentDate = currentDate.add(1, 'day').hour(10).minute(0);
+          currentDate = currentDate.add(1, "day").hour(10).minute(0);
         }
       }
     }
-  
+
     let start = currentDate?.toDate();
-    
+
     let activityDurationInHours;
-    if (typeof activity.duree === 'number') {
+    if (typeof activity.duree === "number") {
       // Converting minutes to hours
       activityDurationInHours = activity.duree / 60;
     } else {
       throw new Error(`activity.duree is not a number: `);
     }
-  
+
     let end = currentDate.add(activityDurationInHours, "hours")?.toDate();
-      
+
     if (!end) {
-      throw new Error(`end date could not be calculated for activity: ${activity.id}`);
+      throw new Error(
+        `end date could not be calculated for activity: ${activity.id}`
+      );
     }
-  
+
     // Check if the activity falls in sleeping hours, if so move it to next day morning
     if (currentDate.hour() >= 22 || currentDate.hour() < 6) {
-      currentDate = currentDate.add(1, 'day').hour(6).minute(0);
+      currentDate = currentDate.add(1, "day").hour(6).minute(0);
       start = currentDate.toDate();
       end = currentDate.add(activityDurationInHours, "hours").toDate();
     }
-  
+
     tmpPlanning.push({
       start,
       end,
       activityId: activity.id,
     });
-  
+
     currentDate = dayjs(end);
   });
-  
-  
-
 
   await addPlanningEvents(groupID, tmpPlanning);
-}
+};

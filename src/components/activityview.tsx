@@ -64,7 +64,7 @@ const ActivityComponent: React.FC<{ groupId: string }> = ({ groupId }) => {
             <h3 className="text-center text-2xl font-bold pt-4 text-[#E49A0A]">
               {activity.place.name}
             </h3>
-          <RatingStars rating={activity.place.rating} /> / {activity && generateEuroSymbols(activity.place.priceLevel)}
+          <RatingStars rating={activity.place.rating ?? 0} /> / {activity && generateEuroSymbols(activity.place.priceLevel ?? 0)}
 
           </>
         ) : (
