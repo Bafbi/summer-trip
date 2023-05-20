@@ -1,6 +1,6 @@
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
-import { FaHeart, FaTimes } from "react-icons/fa";
+import { FaHeart, FaMeh, FaNeuter, FaSadCry, FaTimes } from "react-icons/fa";
 import { api, type RouterOutputs } from "~/utils/api";
 
 const ActivityComponent: React.FC<{ groupId: string }> = ({ groupId }) => {
@@ -67,23 +67,23 @@ const ActivityComponent: React.FC<{ groupId: string }> = ({ groupId }) => {
         <button
           {...(activity ? {} : { disabled: true })}
           onClick={() => rateActivity({ activityId: activity?.id as string, rating: -1 })}
-          className="flex h-24 w-24 items-center justify-center rounded-full bg-[#1E5552] text-white"
+          className="flex h-24 w-24 items-center justify-center rounded-full bg-[#E49A0A] text-white"
         >
-          <FaTimes className="h-6 w-6" />
+          <FaTimes className="h-10 w-10" />
         </button>
         <button
           {...(activity ? {} : { disabled: true })}
           onClick={() => rateActivity({ activityId: activity?.id as string, rating: 0 })}
-          className="flex h-20 w-20 items-center justify-center rounded-full bg-gray-400 text-white mr-4"
+          className=" mx-6 flex h-24 w-24 items-center justify-center rounded-full bg-gray-400 text-white"
         >
-         Maybe
+        <FaMeh className="h-12 w-12" />
         </button>
         <button
           {...(activity ? {} : { disabled: true })}
           onClick={() => rateActivity({ activityId: activity?.id as string, rating: 1 })}
-          className="ml-6 flex h-24 w-24 items-center justify-center rounded-full bg-red-500 text-white"
+          className=" flex h-24 w-24 items-center justify-center rounded-full bg-red-500 text-white"
         >
-          <FaHeart className="h-6 w-6" />
+          <FaHeart className="h-10 w-10" />
         </button>
       </div> 
     </div>
