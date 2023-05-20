@@ -10,7 +10,7 @@ export const findNewActivities = async (coordinates: {lat: number, lng: number})
     params: {
       location: `${coordinates.lat},${coordinates.lng}`,
       radius: 10000,
-      type: "tourist_attraction",
+      type: "restaurant",
       key: env.GOOGLE_PLACES_API_KEY,
     },
   });

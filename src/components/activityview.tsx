@@ -2,6 +2,7 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { FaHeart, FaMeh, FaNeuter, FaSadCry, FaTimes } from "react-icons/fa";
 import { api, type RouterOutputs } from "~/utils/api";
+import RatingStars from "./ratingstartview";
 
 const ActivityComponent: React.FC<{ groupId: string }> = ({ groupId }) => {
   const [activity, setActivity] =
@@ -26,6 +27,13 @@ const ActivityComponent: React.FC<{ groupId: string }> = ({ groupId }) => {
       handleNextActivity();
     },
   });
+  const generateEuroSymbols = (priceLevel: number) => {
+    let symbols = '';
+    for(let i = 0; i < priceLevel; i++) {
+      symbols += '€';
+    }
+    return symbols;
+  }
 
   return (
     <div className="flex flex-col items-center">
@@ -56,6 +64,8 @@ const ActivityComponent: React.FC<{ groupId: string }> = ({ groupId }) => {
             <h3 className="text-center text-2xl font-bold pt-4 text-[#E49A0A]">
               {activity.place.name}
             </h3>
+          <RatingStars rating={activity.place.rating} /> / {activity && generateEuroSymbols(activity.place.priceLevel)}
+
           </>
         ) : (
           <h3 className="text-center text-2xl font-bold text-[#E49A0A]">
