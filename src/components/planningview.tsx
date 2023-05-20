@@ -24,7 +24,7 @@ const PlanningView: React.FC<{ groupId: string }> = ({ groupId }) => {
   const {mutate} = api.planning.generatePlaning.useMutation({
     onSuccess: (updatePlanningData) => {
       console.log(updatePlanningData);
-      
+      console.log("planning généré");
     },
   });
   
