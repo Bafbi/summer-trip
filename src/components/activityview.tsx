@@ -74,14 +74,14 @@ const ActivityComponent: React.FC<{ groupId: string }> = ({ groupId }) => {
         <button
           {...(activity ? {} : { disabled: true })}
           onClick={() => rateActivity({ activityId: activity?.id as string, rating: 0 })}
-          className="flex h-20 w-20 items-center justify-center rounded-full bg-gray-400 text-white mr-4"
+          className=" mx-6 flex h-24 w-24 items-center justify-center rounded-full bg-gray-400 text-white"
         >
          Maybe
         </button>
         <button
           {...(activity ? {} : { disabled: true })}
           onClick={() => rateActivity({ activityId: activity?.id as string, rating: 1 })}
-          className="ml-6 flex h-24 w-24 items-center justify-center rounded-full bg-red-500 text-white"
+          className=" flex h-24 w-24 items-center justify-center rounded-full bg-red-500 text-white"
         >
           <FaHeart className="h-6 w-6" />
         </button>
