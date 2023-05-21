@@ -37,8 +37,8 @@ const ActivityComponent: React.FC<{ groupId: string }> = ({ groupId }) => {
 
   return (
     <div className="flex flex-col items-center">
-      <h2 className="text-center text-2xl font-bold text-[#E49A0A] pt-8">
-        What do you think?
+      <h2 className="text-center text-3xl font-bold text-[#E49A0A] pt-3">
+        Ça t'interesse ?
       </h2>
       <div className="max-w-md w-full mx-auto">
         {activity ? (
@@ -61,19 +61,27 @@ const ActivityComponent: React.FC<{ groupId: string }> = ({ groupId }) => {
                 </div>
               </div>
             </div>
-            <h3 className="text-center text-2xl font-bold pt-4 text-[#E49A0A]">
-              {activity.place.name}
-            </h3>
-          <RatingStars rating={activity.place.rating ?? 0} /> / {activity && generateEuroSymbols(activity.place.priceLevel ?? 0)}
+            <div className="flex flex-col justify-center items-center">
+              <p className="text-center text-2xl font-bold pt-3 text-[#E49A0A]">
+                {activity.place.name}
+              </p>
+              <p className="flex justify-center mt-0 items-center text-2xl font-bold text-[#E49A0A]">
+                <RatingStars rating={activity.place.rating ?? 0} />
+              </p>
+              <p className="flex justify-center mt-2 items-center text-2xl font-bold text-[#E49A0A]">
+                {activity && generateEuroSymbols(activity.place.priceLevel ?? 0)}
+              </p>
+              <hr className="w-4/5 mt-2 mb-2 border-[#E49A0A] border-2" />
+            </div>
 
           </>
         ) : (
           <h3 className="text-center text-2xl font-bold text-[#E49A0A]">
-            No more activities
+            Chargement ...
           </h3>
         )}
       </div>
-      <div className="flex mt-20">
+      <div className="flex mt-5">
         <button
           {...(activity ? {} : { disabled: true })}
           onClick={() => rateActivity({ activityId: activity?.id as string, rating: -1 })}
@@ -84,7 +92,7 @@ const ActivityComponent: React.FC<{ groupId: string }> = ({ groupId }) => {
         <button
           {...(activity ? {} : { disabled: true })}
           onClick={() => rateActivity({ activityId: activity?.id as string, rating: 0 })}
-          className=" mx-6 flex h-24 w-24 items-center justify-center rounded-full bg-gray-400 text-white"
+          className="mx-6 flex h-24 w-24 items-center justify-center rounded-full bg-gray-400 text-white"
         >
         <FaMeh className="h-12 w-12" />
         </button>
