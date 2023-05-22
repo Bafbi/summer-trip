@@ -224,13 +224,13 @@ const GroupsPage: NextPage = () => {
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-6 p-4 md:grid-cols-2">
-            <div className="h-24 rounded-lg bg-tertiary shadow">
+            <div className="h-32 rounded-lg bg-tertiary shadow border-[#E49A0A] border-2">
               <button
                 className="flex h-full w-full flex-col items-center justify-center p-2"
                 onClick={toggleExpansion}
               >
                 <FaPlus className="w-10 h-10 flex- text-gray-300" />
-                <div className="flex-2 mt-2 max-w-xl text-sm text-gray-200">
+                <div className="flex-2 mt-2 max-w-xl text-sm text-gray-300">
                   <p className="text-l text-sm">Créer un groupe</p>
                 </div>
               </button>
