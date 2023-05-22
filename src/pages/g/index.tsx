@@ -224,7 +224,7 @@ const GroupsPage: NextPage = () => {
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-6 p-4 md:grid-cols-2">
-            <div className="h-32 rounded-lg bg-tertiary shadow border-[#E49A0A] border-2">
+            <div className="h-32 rounded-lg bg-[#E49A0A] shadow-[#E49A0A] shadow-md border-[#E49A0A] border-2">
               <button
                 className="flex h-full w-full flex-col items-center justify-center p-2"
                 onClick={toggleExpansion}

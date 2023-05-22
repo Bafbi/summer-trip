@@ -5,12 +5,16 @@ type Group = RouterOutputs["group"]["getAll"][0];
 
 export const GroupComponent = (props: Group) => {
   return (
-    <div className="rounded-lg bg-tertiary shadow h-32 border-[#E49A0A] border-2">
+    <div className="rounded-lg bg-tertiary shadow-[#E49A0A] shadow-md h-32 border-[#E49A0A] border-2">
       <Link className="lien flex flex-col h-full p-2" href={`/g/${props.id}`}>
-        <h2 className="nomGrp flex-1 text-lg font-medium text-gray-300 text-center border-b-2 border-accent">
+        <h2 className="font-black nomGrp flex-1 text-lg font-medium text-gray-300 text-center border-b-2 border-accent">
           {props.name}
         </h2>
-        <div className="description flex-2 mt-2 max-w-xl text-sm text-gray-200">
+        <div className="mt-1 max-w-xl text-sm text-gray-200 overflow-hidden whitespace-nowrap">
+        <p>Du : {new Date(props.startDate).toLocaleDateString()}</p>
+        <p>au  {new Date(props.endDate).toLocaleDateString()}</p>
+        </div>
+        <div className="description flex-2 mt-2 max-w-xl text-sm text-gray-200 italic">
           <p>{props.description}</p>
         </div>
       </Link>
