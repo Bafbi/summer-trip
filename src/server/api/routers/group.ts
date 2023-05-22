@@ -1,7 +1,6 @@
 import { Type, type Prisma } from "@prisma/client";
 import { z } from "zod";
 
-
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { prisma } from "~/server/db";
 import {
@@ -95,7 +94,7 @@ export const groupRouter = createTRPCRouter({
           if (!activity.photos) {
             return [];
           }
-        
+
           return activity.photos.map((photo) => {
             return ctx.prisma.placePhoto.create({
               data: {
@@ -150,7 +149,7 @@ export const groupRouter = createTRPCRouter({
               photos: {
                 connect: {
                   id: photo.id,
-                }
+                },
               },
               types: {
                 connect: types.map((type) => {
@@ -296,9 +295,26 @@ export const groupRouter = createTRPCRouter({
       });
     }),
 
-  useInvitationLink: protectedProcedure
+  getGroupByInvitationLink: protectedProcedure
     .input(z.object({ link: z.string() }))
     .query(async ({ input, ctx }) => {
+      return ctx.prisma.inviteLink.findUnique({
+        where: {
+          link: input.link,
+        },
+        select: {
+          group: {
+            select: {
+              name: true,
+            },
+          }
+        },
+      });
+    }),
+
+  useInvitationLink: protectedProcedure
+    .input(z.object({ link: z.string() }))
+    .mutation(async ({ input, ctx }) => {
       const link = await ctx.prisma.inviteLink.findUnique({
         where: {
           link: input.link,

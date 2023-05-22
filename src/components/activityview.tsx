@@ -44,7 +44,7 @@ const ActivityComponent: React.FC<{ groupId: string }> = ({ groupId }) => {
         {activity ? (
           <>
             
-            <div className="flex justify-center mt-4">
+            <div className="flex justify-center mt-3">
               <div className="relative w-80 h-80">
                 <div className="w-full h-full rounded-lg overflow-hidden shadow-xl">
                   <div className="aspect-w-1 aspect-h-1">
