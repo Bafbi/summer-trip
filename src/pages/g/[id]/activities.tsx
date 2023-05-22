@@ -34,7 +34,7 @@ const ActivitiesPage: NextPage<{ groupId: string }> = ({ groupId }) => {
       </Head>
       <div className="flex flex-col min-h-screen bg-[#40534D]">
         {/* Header */}
-        <AppHeader groupId={groupId} groupame={"Activities"} />
+        <AppHeader groupId={groupId} groupName={"Activities"} />
 
         <main className="mt-8">
           <div className="grid grid-cols-2 gap-4">

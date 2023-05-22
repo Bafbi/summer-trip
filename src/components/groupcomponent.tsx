@@ -5,23 +5,26 @@ type Group = RouterOutputs["group"]["getAll"][0];
 
 export const GroupComponent = (props: Group) => {
   return (
-    <div className="rounded-lg bg-tertiary shadow-[#E49A0A] shadow-md h-32 border-[#E49A0A] border-2">
-      <Link className="lien flex flex-col h-full p-2" href={`/g/${props.id}`}>
-        <h2 className="font-black nomGrp flex-1 text-lg font-medium text-gray-300 text-center border-b-2 border-accent">
+    <div className="h-32 rounded-lg border-2 border-[#E49A0A] bg-tertiary shadow-md shadow-[#E49A0A]">
+      <Link className="flex h-full flex-col p-2" href={`/g/${props.id}`}>
+        <h2 className="flex-1 border-b-2 border-accent text-center text-lg font-medium text-gray-300">
           {props.name}
         </h2>
-        <div className="mt-1 max-w-xl text-sm text-gray-200 overflow-hidden whitespace-nowrap">
-        <p>Du : {new Date(props.startDate).toLocaleDateString()}</p>
-        <p>au  {new Date(props.endDate).toLocaleDateString()}</p>
+        <div className="mt-1 max-w-xl overflow-hidden whitespace-nowrap text-sm text-gray-200">
+          {props.startDate && props.endDate && (
+            <>
+              <p>Du : {props.startDate.toLocaleDateString()}</p>
+              <p>au {props.endDate.toLocaleDateString()}</p>
+            </>
+          )}
         </div>
-        <div className="description flex-2 mt-2 max-w-xl text-sm text-gray-200 italic">
+        <div className="description flex-2 mt-2 max-w-xl text-sm italic text-gray-200">
           <p>{props.description}</p>
         </div>
       </Link>
     </div>
   );
 };
-
 
 // export const GroupComponent = (props: Group) => {
 //   return (
@@ -41,4 +44,3 @@ export const GroupComponent = (props: Group) => {
 //     </div>
 //   );
 // };
-
