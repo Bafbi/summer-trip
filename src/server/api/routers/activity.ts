@@ -84,7 +84,29 @@ export const activityRouter = createTRPCRouter({
         photo,
       };
     }),
+    getActivitiesWithVotes: protectedProcedure
+    .input(z.object({ groupId: z.string() }))
+    .query(async ({ input, ctx }) => {
+      const activities = await ctx.prisma.activity.findMany({
+        where: {
+          groupId: input.groupId,
+        },
+        include: {
+          place: true,
+          Vote: {
+            where: {
+              vote: {
+                gt: 0,
+              },
+            },
+          },
+        },
+      });
 
+      return activities.map(activity => ({
+        ...activity,
+        voteCount: activity.Vote.length,
+      }));
+    }),
 
- 
 });
