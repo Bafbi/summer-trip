@@ -20,7 +20,7 @@ export const getStaticPaths: GetStaticPaths = () => {
 const ActivitiesPage: NextPage<{groupId: string}> = ({groupId}) => {
   useSession({ required: true });
 
-  const { data: activityData, isLoading: activityLoading } = api.activity.getActivitiesByGroupId.useQuery( { groupId });
+  const { data: activityData, isLoading: activityLoading } = api.activity.getActivitiesWithVotes.useQuery( { groupId });
 
   if (activityLoading) return <div>Loading... {groupId}</div>;
 
@@ -48,8 +48,8 @@ const ActivitiesPage: NextPage<{groupId: string}> = ({groupId}) => {
                 key={activity.id}
                 className="overflow-hidden rounded-lg bg-white shadow"
               >
-                
-              <span>{activity.place.name}</span>
+                <span>{activity.place.name}</span>
+                <span>{activity.voteCount}</span>
               </div>
             ))}
           </div>
