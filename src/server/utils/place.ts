@@ -6,20 +6,24 @@ import { Stream } from "stream";
 // get activity by location with google place api
 export const findNewActivities = async (coordinates: {lat: number, lng: number}) => {
 
-  const activity = await maps.placesNearby({
-    params: {
-      location: `${coordinates.lat},${coordinates.lng}`,
-      radius: 10000,
-      type: "restaurant",
-      key: env.GOOGLE_PLACES_API_KEY,
-    },
+  const types = ["restaurant|bar|night_club", "museum|amusement_park|bowling_alley"];
+
+  const placePromises = types.map((type) => {
+    return maps.placesNearby({
+      params: {
+        location: `${coordinates.lat},${coordinates.lng}`,
+        radius: 10000,
+        keyword: type,
+        key: env.GOOGLE_PLACES_API_KEY,
+      },
+    });
   });
 
-  if (activity.data.status !== "OK") {
-    throw new Error("Activity not found");
-  }
+  const places = await Promise.all(placePromises);
 
-  return activity.data.results;
+  const activities = places.flatMap((place) => place.data.results);
+
+  return activities;
 };
 
 // get location by place name with google geocode api
