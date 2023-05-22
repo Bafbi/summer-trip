@@ -37,14 +37,14 @@ const ActivityComponent: React.FC<{ groupId: string }> = ({ groupId }) => {
 
   return (
     <div className="flex flex-col items-center">
-      <h2 className="text-center text-3xl font-bold text-[#E49A0A] pt-3">
+      <h2 className="text-center text-2xl font-bold text-[#E49A0A] pt-3">
         Ça t'interesse ?
       </h2>
       <div className="max-w-md w-full mx-auto">
         {activity ? (
           <>
             
-            <div className="flex justify-center mt-4">
+            <div className="flex justify-center mt-3">
               <div className="relative w-80 h-80">
                 <div className="w-full h-full rounded-lg overflow-hidden shadow-xl">
                   <div className="aspect-w-1 aspect-h-1">
