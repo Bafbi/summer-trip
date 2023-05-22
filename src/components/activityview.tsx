@@ -38,7 +38,7 @@ const ActivityComponent: React.FC<{ groupId: string }> = ({ groupId }) => {
   return (
     <div className="flex flex-col items-center">
       <h2 className="text-center text-3xl font-bold text-[#E49A0A] pt-3">
-        Ça t'interesse ?
+        {"Ça t'interesse ?"}
       </h2>
       <div className="max-w-md w-full mx-auto">
         {activity ? (

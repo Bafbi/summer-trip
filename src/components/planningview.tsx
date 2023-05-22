@@ -36,13 +36,53 @@ const PlanningView: React.FC<{ groupId: string }> = ({ groupId }) => {
 
   const getDayProps: DayPropGetter = (date: Date) => {
     const isCurrentDay = dayjs(date).isSame(new Date(), "day");
-    const backgroundColor = isCurrentDay ? "#E49A0A" : ""; // Set the color for the current day
+    const backgroundColor = isCurrentDay ? "#E49A0A" : "";
+    const textColor = isCurrentDay ? "#000000" : "#E49A0A";
 
     return {
       style: {
         backgroundColor: backgroundColor,
+        color: textColor,
       },
     };
+  };
+
+  const CustomTimeSlotWrapper = () => {
+    return (
+      <div>
+        {/* Contenu personnalisé du TimeSlotWrapper */}
+      </div>
+    );
+  };
+
+  const CustomTimeGutterWrapper = () => {
+    const hours = [];
+    const startHour = 8; // Heure de début (7h du matin)
+    const endHour = 23; // Heure de fin (23h)
+
+    for (let hour = startHour; hour <= endHour; hour++) {
+      const formattedHour = dayjs().hour(hour).format("HH"); // Formate l'heure au format HH:mm
+      hours.push(formattedHour);
+    }
+
+    return (
+      <div className="grid grid-rows-24 gap-y-6 p-3">
+        {hours.map((hour, index) => (
+          <div key={index} className="text-primary row-span-1">
+            {`${hour}h`}
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  const CustomTimeGutterHeader = () => {
+   
+    return (
+      <div className="w-11">
+      
+      </div>
+    );
   };
 
   return (
@@ -67,6 +107,9 @@ const PlanningView: React.FC<{ groupId: string }> = ({ groupId }) => {
           }}
           components={{
             toolbar: CustomToolbar,
+            timeSlotWrapper: CustomTimeSlotWrapper,
+            timeGutterHeader: CustomTimeGutterHeader,
+            timeGutterWrapper: CustomTimeGutterWrapper, // Utilise le composant personnalisé pour l'en-tête de la colonne des heures
             week: {
               header: CustomWeekView,
             },
@@ -78,6 +121,8 @@ const PlanningView: React.FC<{ groupId: string }> = ({ groupId }) => {
             },
           }}
           dayPropGetter={getDayProps}
+          min={dayjs().hour(7).toDate()} // Définir l'heure minimale à 7h du matin
+          max={dayjs().hour(23).toDate()} // Définir l'heure maximale à 23h
         />
       </div>
       <div className="sticky bottom-10 pl-60">
@@ -92,13 +137,12 @@ const PlanningView: React.FC<{ groupId: string }> = ({ groupId }) => {
   );
 };
 
-// Composant personnalisé pour la barre d'outils
 const CustomToolbar = (toolbarProps: ToolbarProps) => {
   return (
     <div className="flex items-center justify-between bg-[#E49A0A] px-4 py-2">
       <div className="text-sm font-bold">{toolbarProps.label}</div>
       <div className="flex space-x-2">
-      {(toolbarProps.views as View[]).map((view) => (
+        {(toolbarProps.views as View[]).map((view) => (
           <button
             key={view}
             className="rounded-md bg-[#1E5552] px-3 py-1 text-[#E49A0A] hover:text-[#1CCDB3]"
@@ -124,26 +168,22 @@ const CustomToolbar = (toolbarProps: ToolbarProps) => {
   );
 };
 
-// Composant personnalisé pour l'en-tête de la semaine
 const CustomWeekView = (headerProps: HeaderProps) => {
   const formattedDate = dayjs(headerProps.date).format("dddd");
   const shortDay = formattedDate.substring(0, 3);
 
-  return <div className="my-2 text-sm font-bold text-gray-800">{shortDay}</div>;
+  return <div className="mb-2 font-bold">{shortDay}</div>;
 };
 
-// Composant personnalisé pour l'en-tête de la journée
 const CustomDayView = (headerProps: HeaderProps) => {
   const formattedDate = dayjs(headerProps.date).format("MMMM Do, YYYY");
   return (
     <div className="p-4">
-      <div className="mb-2 font-bold text-gray-800">{formattedDate}</div>
+      <div className="mb-2 font-bold">{formattedDate}</div>
     </div>
   );
 };
 
-// Composant personnalisé pour les événements de l'agenda
-// Composant personnalisé pour les événements de l'agenda
 const CustomAgendaEvent = (eventProps: EventProps) => {
   return (
     <div className="rounded-md border border-[#E49A0A] bg-[#E49A0A] p-2 text-[#1E5552]">
