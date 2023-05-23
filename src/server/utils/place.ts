@@ -23,6 +23,11 @@ export const findNewActivities = async (coordinates: {lat: number, lng: number})
 
   const activities = places.flatMap((place) => place.data.results);
 
+  // use half of the activities
+  const half = Math.ceil(activities.length / 2);
+  const randomActivities = activities.sort(() => 0.5 - Math.random()).slice(0, half);
+
+
   if (!activities) {
     throw new Error("No activities found");
   }
@@ -30,7 +35,7 @@ export const findNewActivities = async (coordinates: {lat: number, lng: number})
   console.log(activities);
   
 
-  return activities;
+  return randomActivities;
 };
 
 // get location by place name with google geocode api
