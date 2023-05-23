@@ -45,8 +45,10 @@ export const groupRouter = createTRPCRouter({
     )
     .mutation(async ({ input, ctx }) => {
       try {
+        // Get the coordinates of the location
         const coordinates = await getLocation(input.location);
 
+        // Create the group
         const group = await ctx.prisma.group.create({
           data: {
             name: input.name,
@@ -68,10 +70,10 @@ export const groupRouter = createTRPCRouter({
           },
         });
 
+        // Find new activities near the location
         const activities = await findNewActivities(coordinates);
 
-
-        
+        // Upsert the types of the activities
         const typePromises = activities.flatMap((activity) => {
           if (!activity.types) {
             return [];
@@ -91,7 +93,9 @@ export const groupRouter = createTRPCRouter({
             });
           });
         });
+        const createdTypes = await Promise.all(typePromises);
 
+        // Create the photos of the activities
         const photosPromises = activities.flatMap((activity) => {
           if (!activity.photos) {
             return [];
@@ -108,16 +112,14 @@ export const groupRouter = createTRPCRouter({
             });
           });
         });
-
         const createdPhotos = await Promise.all(photosPromises);
-        const createdTypes = await Promise.all(typePromises);
 
-        for (let i = 0; i < activities.length; i++) {
-          const activity = activities[i];
-          const photo = createdPhotos[i];
+        // Create the places of the activities
+        const placePromises = activities.map((activity, index) => {
+          const photo = createdPhotos[index];
 
           if (!activity || !activity.types || !activity.geometry || !photo) {
-            continue;
+            return null;
           }
 
           const types = createdTypes.filter((type) => {
@@ -126,7 +128,7 @@ export const groupRouter = createTRPCRouter({
             });
           });
 
-          const place = await ctx.prisma.place.create({
+          return ctx.prisma.place.create({
             data: {
               placeId: activity.place_id,
               name: activity.name,
@@ -169,7 +171,11 @@ export const groupRouter = createTRPCRouter({
               },
             },
           });
-        }
+        });
+
+        await Promise.all(placePromises.filter(Boolean));
+
+        return group;
       } catch (error) {
         // Handle errors appropriately
         console.error(error);
@@ -309,7 +315,7 @@ export const groupRouter = createTRPCRouter({
             select: {
               name: true,
             },
-          }
+          },
         },
       });
     }),
