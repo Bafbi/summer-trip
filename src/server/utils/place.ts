@@ -23,6 +23,13 @@ export const findNewActivities = async (coordinates: {lat: number, lng: number})
 
   const activities = places.flatMap((place) => place.data.results);
 
+  if (!activities) {
+    throw new Error("No activities found");
+  }
+
+  console.log(activities);
+  
+
   return activities;
 };
 
