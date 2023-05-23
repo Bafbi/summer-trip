@@ -1,13 +1,12 @@
 import dayjs from "dayjs";
-import { eventNames } from "process";
 import { useEffect, useState } from "react";
 import {
   Calendar,
-  DayPropGetter,
-  EventProps,
-  HeaderProps,
-  ToolbarProps,
-  View,
+  type DayPropGetter,
+  type EventProps,
+  type HeaderProps,
+  type ToolbarProps,
+  type View,
   dayjsLocalizer,
 } from "react-big-calendar";
 import { api, type RouterOutputs } from "~/utils/api";
@@ -49,11 +48,7 @@ const PlanningView: React.FC<{ groupId: string }> = ({ groupId }) => {
   };
 
   const CustomTimeSlotWrapper = () => {
-    return (
-      <div>
-        {/* Contenu personnalisé du TimeSlotWrapper */}
-      </div>
-    );
+    return <div>{/* Contenu personnalisé du TimeSlotWrapper */}</div>;
   };
 
   const CustomTimeGutterWrapper = () => {
@@ -67,9 +62,9 @@ const PlanningView: React.FC<{ groupId: string }> = ({ groupId }) => {
     }
 
     return (
-      <div className="grid grid-rows-24 gap-y-6 p-3">
+      <div className="grid-rows-24 grid gap-y-6 p-3">
         {hours.map((hour, index) => (
-          <div key={index} className="text-primary row-span-1">
+          <div key={index} className="row-span-1 text-primary">
             {`${hour}h`}
           </div>
         ))}
@@ -78,12 +73,7 @@ const PlanningView: React.FC<{ groupId: string }> = ({ groupId }) => {
   };
 
   const CustomTimeGutterHeader = () => {
-   
-    return (
-      <div className="w-11">
-      
-      </div>
-    );
+    return <div className="w-11"></div>;
   };
 
   return (
@@ -107,24 +97,16 @@ const PlanningView: React.FC<{ groupId: string }> = ({ groupId }) => {
             agenda: true,
           }}
           components={{
-          
             toolbar: CustomToolbar,
             timeSlotWrapper: CustomTimeSlotWrapper,
             timeGutterHeader: CustomTimeGutterHeader,
             timeGutterWrapper: CustomTimeGutterWrapper,
-          
+
             week: {
               header: CustomWeekView,
             },
             day: {
               header: CustomDayView,
-            },
-            agenda: {
-           
-              event: CustomAgendaEvent,
-              time: CustomAgendaTime,
-              date : CustomAgendaDate,
-                
             },
           }}
           dayPropGetter={getDayProps}
@@ -193,7 +175,6 @@ const CustomDayView = (headerProps: HeaderProps) => {
 
 const CustomAgendaEvent = (eventProps: EventProps) => {
   return (
-    
     <div className="rounded-md border border-[#E49A0A] bg-[#E49A0A] p-2 text-[#1E5552]">
       <span className="font-bold">
         {eventProps.event.title?.toLocaleString()}
@@ -203,11 +184,10 @@ const CustomAgendaEvent = (eventProps: EventProps) => {
 };
 
 const CustomAgendaTime = (eventProps: EventProps) => {
- 
-
   return (
-    <div className="text-[#E49A0A] w-full">
-      {dayjs(eventProps.event.start).format('MM/D/YY ,HH:mm')} - {dayjs(eventProps.event.end).format('HH:mm')}
+    <div className="w-full text-[#E49A0A]">
+      {dayjs(eventProps.event.start).format("MM/D/YY ,HH:mm")} -{" "}
+      {dayjs(eventProps.event.end).format("HH:mm")}
     </div>
   );
 };
@@ -216,9 +196,4 @@ const CustomAgendaDate = () => {
   return null;
 };
 
-
- 
-
-
- 
 export default PlanningView;

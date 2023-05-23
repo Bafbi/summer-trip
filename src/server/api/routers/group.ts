@@ -70,6 +70,8 @@ export const groupRouter = createTRPCRouter({
 
         const activities = await findNewActivities(coordinates);
 
+
+        
         const typePromises = activities.flatMap((activity) => {
           if (!activity.types) {
             return [];
