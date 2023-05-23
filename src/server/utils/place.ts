@@ -8,7 +8,7 @@ export const findNewActivities = async (coordinates: {lat: number, lng: number})
 
   const types = ["restaurant|bar|night_club", "museum|amusement_park|bowling_alley"];
 
-  const placePromises = types.map((type) => {
+  const placePromises = types.flatMap((type) => {
     return maps.placesNearby({
       params: {
         location: `${coordinates.lat},${coordinates.lng}`,
