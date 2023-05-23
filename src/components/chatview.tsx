@@ -3,6 +3,7 @@ import Pusher from "pusher-js";
 import { useEffect, useRef, useState } from "react";
 import { env } from "~/env.mjs";
 import { api, type RouterOutputs } from "~/utils/api";
+import Image from "next/image";
 
 const pusher = new Pusher(env.NEXT_PUBLIC_PUSHER_KEY, {
   cluster: "eu",
@@ -17,9 +18,15 @@ const ChatView: React.FC<{ groupId: string }> = ({ groupId }) => {
   const [input, setInput] = useState("");
   const [messageId, setMessageId] = useState<string>("");
 
+  const [isSending, setIsSending] = useState(false);
+
   const { mutate } = api.message.send.useMutation({
     onSuccess: () => {
       setInput("");
+      setIsSending(false);
+    },
+    onMutate: () => {
+      setIsSending(true);
     },
   });
 
@@ -32,11 +39,6 @@ const ChatView: React.FC<{ groupId: string }> = ({ groupId }) => {
       setMessages([...chatData]);
     }
   }, [chatData]);
-
-  const sendMessage = (e: React.FormEvent) => {
-    e.preventDefault();
-    mutate({ content: input, groupId });
-  };
 
   const { data: messageData } = api.message.getChatMessage.useQuery({
     id: messageId,
@@ -67,82 +69,90 @@ const ChatView: React.FC<{ groupId: string }> = ({ groupId }) => {
     if (formRef.current) {
       formRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [messages]);
+  }, []);
 
   return (
-      <div className="max-w-full max-h-fit rounded-lg bg-[#405340]">
-        <div className="messages flex flex-col items-center justify-center gap-12 px-300 py-2">
-          {messages.map((message, i) => (
-            <div
-              key={i}
-              className={`message flex flex-col ${
-                message?.sender.name === sessionData?.user.name
-                  ? "items-end"
-                  : "items-start"
-              } justify-start gap-2 px-2 py-2 ${
-                message?.sender.name === sessionData?.user.name
-                  ? "self-end"
-                  : "self-start"
-              }`}
-            >
-              
-              {message?.sender.name !== sessionData?.user.name && (
-                <>
-                  <div className="flex items-center">
-                    <img
-                      className="w-11 h-11 rounded-full mr-2"
-                      src={message?.sender.image ?? ""}
-                      alt="User Profile"
-                    />
-                    <h1 className="text-[#1CCDB3] text-xl font-bold">
-                      {message?.sender.name}
-                    </h1>
-                  </div>
-                  <p className="text-gray-300 text-left text-xl px-16 font-semibold">
-                    {message?.content}
-                  </p>
-                </>
-              )}
-              {message?.sender.name === sessionData?.user.name && (
-                <>
-                  <div className="flex items-center justify-end">
-                    <h1 className="text-[#E49A0A] text-xl font-bold">
-                      {message?.sender.name}
-                    </h1>
-                    <img
-                      className="w-11 h-11 rounded-full mt-2 ml-2"
-                      src={sessionData?.user.image ?? ""}
-                      alt="User Profile"
-                    />
-                  </div>
-                  <p className="text-gray-300 text-right text-xl px-16 font-semibold">
-                    {message?.content}
-                  </p>
-                </>
-              )}
-            </div>
-          ))}
-        </div>
-        <form
-          onSubmit={sendMessage}
-          className="flex items-center justify-between px-0 py-2"
-          ref={formRef}
-        >
-          <input
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            type="text"
-            placeholder="Type a message..."
-            className="zoneText flex-grow rounded-lg bg-gray-100 font-semibold px-3 py-5 focus:outline-none"
-          />
-          <button
-            type="submit"
-            className="publierMessage ml-1 rounded-lg bg-[#E49A0A] px-4 py-5 font-semibold text-gray-200 hover:bg-[#1CCDB3]"
+    <div className="max-h-fit max-w-full rounded-lg bg-[#405340]">
+      <div className="messages px-300 flex flex-col items-center justify-center gap-12 py-2">
+        {messages.map((message, i) => (
+          <div
+            key={i}
+            className={`message flex flex-col ${
+              message?.sender.name === sessionData?.user.name
+                ? "items-end"
+                : "items-start"
+            } justify-start gap-2 px-2 py-2 ${
+              message?.sender.name === sessionData?.user.name
+                ? "self-end"
+                : "self-start"
+            }`}
           >
-            Send
-          </button>
-        </form>
+            {message?.sender.name !== sessionData?.user.name && (
+              <>
+                <div className="flex items-center">
+                  <Image
+                    className="mr-2 h-11 w-11 rounded-full"
+                    src={message?.sender.image ?? ""}
+                    alt="User Profile"
+                    width={44}
+                    height={44}
+                  />
+                  <h1 className="text-xl font-bold text-[#1CCDB3]">
+                    {message?.sender.name}
+                  </h1>
+                </div>
+                <p className="px-16 text-left text-xl font-semibold text-gray-300">
+                  {message?.content}
+                </p>
+              </>
+            )}
+            {message?.sender.name === sessionData?.user.name && (
+              <>
+                <div className="flex items-center justify-end">
+                  <h1 className="text-xl font-bold text-[#E49A0A]">
+                    {message?.sender.name}
+                  </h1>
+                  <Image
+                    className="ml-2 mt-2 h-11 w-11 rounded-full"
+                    src={sessionData?.user.image ?? ""}
+                    alt="User Profile"
+                    width={44}
+                    height={44}
+                  />
+                </div>
+                <p className="px-16 text-right text-xl font-semibold text-gray-300">
+                  {message?.content}
+                </p>
+              </>
+            )}
+          </div>
+        ))}
+        
       </div>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          mutate({ groupId, content: input });
+          }}
+        className="flex items-center justify-between p-2 gap-2 sticky bottom-0"
+        ref={formRef}
+      >
+        <input
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          type="text"
+          placeholder="Type a message..."
+          className="flex-1 rounded-xl font-semibold text-primary placeholder:text-gray-400 bg-secondary border-2 border-accent p-2 focus:outline-none"
+        />
+        <button
+          type="submit"
+          className="p-2 rounded-xl bg-secondary font-semibold text-primary"
+          {...(isSending && { disabled: true })}
+        >
+          Send
+        </button>
+      </form>
+    </div>
   );
 };
 
