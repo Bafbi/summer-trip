@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import { eventNames } from "process";
 import { useEffect, useState } from "react";
 import {
   Calendar,
@@ -106,10 +107,12 @@ const PlanningView: React.FC<{ groupId: string }> = ({ groupId }) => {
             agenda: true,
           }}
           components={{
+          
             toolbar: CustomToolbar,
             timeSlotWrapper: CustomTimeSlotWrapper,
             timeGutterHeader: CustomTimeGutterHeader,
-            timeGutterWrapper: CustomTimeGutterWrapper, // Utilise le composant personnalisé pour l'en-tête de la colonne des heures
+            timeGutterWrapper: CustomTimeGutterWrapper,
+          
             week: {
               header: CustomWeekView,
             },
@@ -117,7 +120,11 @@ const PlanningView: React.FC<{ groupId: string }> = ({ groupId }) => {
               header: CustomDayView,
             },
             agenda: {
+           
               event: CustomAgendaEvent,
+              time: CustomAgendaTime,
+              date : CustomAgendaDate,
+                
             },
           }}
           dayPropGetter={getDayProps}
@@ -186,6 +193,7 @@ const CustomDayView = (headerProps: HeaderProps) => {
 
 const CustomAgendaEvent = (eventProps: EventProps) => {
   return (
+    
     <div className="rounded-md border border-[#E49A0A] bg-[#E49A0A] p-2 text-[#1E5552]">
       <span className="font-bold">
         {eventProps.event.title?.toLocaleString()}
@@ -194,4 +202,23 @@ const CustomAgendaEvent = (eventProps: EventProps) => {
   );
 };
 
+const CustomAgendaTime = (eventProps: EventProps) => {
+ 
+
+  return (
+    <div className="text-[#E49A0A] w-full">
+      {dayjs(eventProps.event.start).format('MM/D/YY ,HH:mm')} - {dayjs(eventProps.event.end).format('HH:mm')}
+    </div>
+  );
+};
+
+const CustomAgendaDate = () => {
+  return null;
+};
+
+
+ 
+
+
+ 
 export default PlanningView;
