@@ -16,6 +16,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
       <SessionProvider session={session}>
         <Head>
           <link rel="manifest" href="site.webmanifest" />
+          <link rel="icon" href="/logo.svg" />
           <meta
             name="viewport"
             content="width=device-width, initial-scale=1.0, user-scalable=no"
