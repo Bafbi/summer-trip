@@ -1,6 +1,6 @@
 {
   "functions": {
-    "server/api/routers/group.ts": {
+    "/api/trpc/group.create": {
       "maxDuration": 60
     }
   }
