@@ -122,8 +122,7 @@ const PlanningView: React.FC<{ groupId: string }> = ({ groupId }) => {
             agenda: {
            
               event: CustomAgendaEvent,
-              time: CustomAgendaTime,
-              date : CustomAgendaDate,
+              
                 
             },
           }}
@@ -202,19 +201,6 @@ const CustomAgendaEvent = (eventProps: EventProps) => {
   );
 };
 
-const CustomAgendaTime = (eventProps: EventProps) => {
- 
-
-  return (
-    <div className="text-[#E49A0A] w-full">
-      {dayjs(eventProps.event.start).format('MM/D/YY ,HH:mm')} - {dayjs(eventProps.event.end).format('HH:mm')}
-    </div>
-  );
-};
-
-const CustomAgendaDate = () => {
-  return null;
-};
 
 
  
