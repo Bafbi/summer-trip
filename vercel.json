@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "server/api/routers/group.ts": {
+      "maxDuration": 60
+    }
+  }
+}
