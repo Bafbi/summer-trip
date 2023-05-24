@@ -1,6 +1,6 @@
 {
   "functions": {
-    "api/trpc/group.create": {
+    "api/trpc/[trpc]": {
       "maxDuration": 60
     }
   }
