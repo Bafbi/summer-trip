@@ -132,6 +132,7 @@ const ChatView: React.FC<{ groupId: string }> = ({ groupId }) => {
       <form
         onSubmit={(e) => {
           e.preventDefault();
+          if (input.length < 1) return;
           mutate({ groupId, content: input });
           }}
         className="flex items-center justify-between p-2 gap-2 sticky bottom-0"
@@ -147,7 +148,7 @@ const ChatView: React.FC<{ groupId: string }> = ({ groupId }) => {
         <button
           type="submit"
           className="p-2 rounded-xl bg-secondary font-semibold text-primary"
-          {...(isSending && { disabled: true })}
+          disabled={isSending}
         >
           Send
         </button>
