@@ -108,6 +108,12 @@ const PlanningView: React.FC<{ groupId: string }> = ({ groupId }) => {
             day: {
               header: CustomDayView,
             },
+            agenda: {
+           
+              event: CustomAgendaEvent,
+              
+                
+            },
           }}
           dayPropGetter={getDayProps}
           min={dayjs().hour(7).toDate()} // Définir l'heure minimale à 7h du matin
@@ -183,17 +189,5 @@ const CustomAgendaEvent = (eventProps: EventProps) => {
   );
 };
 
-const CustomAgendaTime = (eventProps: EventProps) => {
-  return (
-    <div className="w-full text-[#E49A0A]">
-      {dayjs(eventProps.event.start).format("MM/D/YY ,HH:mm")} -{" "}
-      {dayjs(eventProps.event.end).format("HH:mm")}
-    </div>
-  );
-};
-
-const CustomAgendaDate = () => {
-  return null;
-};
 
 export default PlanningView;
