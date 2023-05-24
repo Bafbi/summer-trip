@@ -23,10 +23,6 @@ const ActivitiesPage: NextPage<{ groupId: string }> = ({ groupId }) => {
 
   const { data: activityData, isLoading: activityLoading } = api.activity.getActivitiesWithVotes.useQuery({ groupId });
 
-  if (activityLoading) return <div>Loading... {groupId}</div>;
-
-  if (!activityData) return <div>Something went wrong</div>;
-
   return (
     <>
       <Head>
@@ -36,9 +32,13 @@ const ActivitiesPage: NextPage<{ groupId: string }> = ({ groupId }) => {
         {/* Header */}
         <AppHeader groupId={groupId} groupName={"Activities"} />
 
-        <main className="mt-8">
-          <div className="grid grid-cols-2 gap-4">
-            {activityData.map((activity) => (
+        <main className="">
+          <div className="grid grid-cols-2 gap-4 p-4">
+            {activityLoading ? (
+              <div>Loading...</div>
+            ) : !activityData ? (
+              <div>No activities</div>
+            ) : ( activityData.map((activity) => (
               <div key={activity.id} className="overflow-hidden rounded-lg bg-[#E49A0A] shadow p-4 text-[#1E5552]">
                 <h3 className="text-xl font-bold">{activity.place.name}</h3>
                 <div className="flex items-center mt-2 text-black">
@@ -46,7 +46,7 @@ const ActivitiesPage: NextPage<{ groupId: string }> = ({ groupId }) => {
                   <span className="text-black font-bold">{activity.voteCount} Likes</span>
                 </div>
               </div>
-            ))}
+            )))}
           </div>
         </main>
       </div>

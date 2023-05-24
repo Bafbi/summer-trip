@@ -43,11 +43,17 @@ const GroupMembersPage: NextPage<{ groupId: string }> = ({ groupId }) => {
   ///
 
   // Invitation links
-  const { mutate: generateInvitationLink } =
-    api.group.generateInvitationLink.useMutation();
 
-  const [invitationLinks, setInvitationLinks] =
-    useState<RouterOutputs["group"]["getInvitationLinks"]>();
+  const [invitationLinks, setInvitationLinks] = useState<
+    RouterOutputs["group"]["getInvitationLinks"]
+  >([]);
+
+  const { mutate: generateInvitationLink } =
+    api.group.generateInvitationLink.useMutation({
+      onSuccess: (data) => {
+        setInvitationLinks((links) => [...links, data]);
+      },
+    });
 
   const { data: invitationLinkData } = api.group.getInvitationLinks.useQuery({
     groupId,
@@ -86,7 +92,7 @@ const GroupMembersPage: NextPage<{ groupId: string }> = ({ groupId }) => {
       <main className="h-screen bg-[#405340] px-4 pt-8 ">
         <div
           id="membersList"
-          className="border-2 border-[#E49A0A] rounded-lg p-4 mb-4"
+          className="mb-4 rounded-lg border-2 border-[#E49A0A] p-4"
         >
           <h2 className="text-center text-primary">Group members list</h2>
           <ul className="mt-4 text-primary">
@@ -95,7 +101,9 @@ const GroupMembersPage: NextPage<{ groupId: string }> = ({ groupId }) => {
                 <li
                   key={member.id}
                   className={`item-center flex justify-between px-4 py-2 ${
-                    index !== members.length - 1 ? "border-b border-[#E49A0A]" : ""
+                    index !== members.length - 1
+                      ? "border-b border-[#E49A0A]"
+                      : ""
                   }`}
                 >
                   <span>{member.name}</span>
@@ -163,12 +171,14 @@ const GroupMembersPage: NextPage<{ groupId: string }> = ({ groupId }) => {
           </ul>
         </div>
         {showQRCodeModal && (
-          <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-[#E49A0A] p-4 rounded-lg max-w-md max-h-80vh overflow-y-auto text-center">
-              <h3 className=" text-[#1E5552] text-lg font-bold mb-4">QR Code</h3>
+          <div className="fixed left-0 top-0 flex h-full w-full items-center justify-center bg-black bg-opacity-50">
+            <div className="max-h-80vh max-w-md overflow-y-auto rounded-lg bg-[#E49A0A] p-4 text-center">
+              <h3 className=" mb-4 text-lg font-bold text-[#1E5552]">
+                QR Code
+              </h3>
               <QRCode value={qrCodeUrl} size={200} />
               <button
-                className="text-[#E49A0A] hover:text-gray-700 absolute top-4 right-4"
+                className="absolute right-4 top-4 text-[#E49A0A] hover:text-gray-700"
                 onClick={() => setShowQRCodeModal(false)}
               >
                 Close
