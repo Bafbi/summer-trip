@@ -139,7 +139,38 @@ export const generatePlaning = async (groupID: string) => {
     "restaurant",
     "museum",
   ];
-
+  const validateActivityTime = (
+    planning: CalendarData[], 
+    activity: CalendarData, 
+    tripStart: Date, 
+    tripEnd: Date, 
+    attempt: number = 0
+  ): CalendarData | null => {
+    // Stop if we've tried adjusting the time 10 times
+    // or if the activity start time has moved past the end of the trip
+    if (attempt >= 10 || activity.start >= tripEnd) {
+      return null;
+    }
+  
+    const overlaps = planning.find(
+      (plannedActivity) =>
+        (activity.start >= plannedActivity.start && activity.start <= plannedActivity.end) ||
+        (activity.end >= plannedActivity.start && activity.end <= plannedActivity.end)
+    );
+  
+    if (overlaps || activity.start < tripStart || activity.end > tripEnd) {
+      const adjustedActivity: CalendarData = {
+        ...activity,
+        start: new Date(activity.start.getTime() + 60 * 60 * 1000),
+        end: new Date(activity.end.getTime() + 60 * 60 * 1000)
+      };
+      
+      return validateActivityTime(planning, adjustedActivity, tripStart, tripEnd, attempt + 1);
+    } else {
+      return activity;
+    }
+  }
+  
   const topActivities = topRatedActivities.map((activity) => {
     const hours = activity.place.openingHours;
     const types = activity.place.types;
@@ -165,95 +196,113 @@ export const generatePlaning = async (groupID: string) => {
   });
 
   console.log(type);
-  const tmpPlanning: CalendarData[] = [];
+  let tmpPlanning: CalendarData[] = [];
 
   let currentDate = dayjs(groupDate?.startDate);
 
   const randomInt = (min: number, max: number) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   };
- // topActivities.sort((a, b) => b.Vote.length - a.Vote.length);
-  topActivities.forEach((activity, index) => {
-    // Wait between 1 and 3 hours before starting the activity
-    currentDate = currentDate.add(randomInt(1, 1.5), "hours");
+ topActivities.forEach((activity, index) => {
+  let activityDurationInHours;
+  if (typeof activity.duree === "number") {
+    // Converting minutes to hours
+    activityDurationInHours = activity.duree / 60;
+  } else {
+    throw new Error(`activity.duree is not a number: `);
+  }
 
-    // Adjust start time depending on the type of activity
-    const isRestaurant = activity.type?.find(
-      (type) => type.category === "restaurant"
-    );
-    const isPark = activity.type?.find((type) => type.category === "park");
+  // Generating random start date for activity within the trip dates
+  const startDate = groupDate?.startDate;
+  const endDate = groupDate?.endDate;
 
-    if (isRestaurant) {
-      const currentHour = currentDate.hour();
+  if (!startDate || !endDate) {
+    throw new Error(`Invalid start or end date`);
+  }
+  const latestPossibleStartTime = new Date(endDate.getTime() - activityDurationInHours * 60 * 60 * 1000);
+  const activityStartDate = new Date(startDate.getTime() + Math.random() * (latestPossibleStartTime.getTime() - startDate.getTime()));
+  const tripDurationInMilliseconds = endDate.getTime() - startDate.getTime();
+  const randomTimeDuringTrip = Math.random() * tripDurationInMilliseconds;
+  
+  let currentDate = dayjs(activityStartDate);
 
-      // If current hour is not within the desired range, adjust accordingly
-      if (
-        !(currentHour >= 12 && currentHour < 14) &&
-        !(currentHour >= 19 && currentHour < 21)
-      ) {
-        // Set start time to the next nearest restaurant time slot
-        if (currentHour < 12) {
-          currentDate = currentDate.hour(12).minute(0);
-        } else if (currentHour >= 14 && currentHour < 19) {
-          currentDate = currentDate.hour(19).minute(0);
-        } else {
-          // If current time is past the evening slot, schedule the restaurant for the next day
-          currentDate = currentDate.add(1, "day").hour(12).minute(0);
-        }
+  // Adjust start time depending on the type of activity
+  const isRestaurant = activity.type?.find(
+    (type) => type.category === "restaurant"
+  );
+  const isPark = activity.type?.find((type) => type.category === "park");
+
+  if (isRestaurant) {
+    const currentHour = currentDate.hour();
+
+    // If current hour is not within the desired range, adjust accordingly
+    if (
+      !(currentHour >= 12 && currentHour < 14) &&
+      !(currentHour >= 19 && currentHour < 21)
+    ) {
+      // Set start time to the next nearest restaurant time slot
+      if (currentHour < 12) {
+        currentDate = currentDate.hour(12).minute(0);
+      } else if (currentHour >= 14 && currentHour < 19) {
+        currentDate = currentDate.hour(19).minute(0);
+      } else {
+        // If current time is past the evening slot, schedule the restaurant for the next day
+        currentDate = currentDate.add(1, "day").hour(12).minute(0);
       }
-    } else if (isPark) {
-      const currentHour = currentDate.hour();
+    }
+  } else if (isPark) {
+    const currentHour = currentDate.hour();
 
-      // If current hour is not within the desired range, adjust accordingly
-      if (!(currentHour >= 10 && currentHour < 19)) {
-        // Set start time to the next nearest park time slot
-        if (currentHour < 10) {
-          currentDate = currentDate.hour(10).minute(0);
-        } else {
-          // If current time is past the park time, schedule the park for the next day
-          currentDate = currentDate.add(1, "day").hour(10).minute(0);
-        }
+    // If current hour is not within the desired range, adjust accordingly
+    if (!(currentHour >= 10 && currentHour < 19)) {
+      // Set start time to the next nearest park time slot
+      if (currentHour < 10) {
+        currentDate = currentDate.hour(10).minute(0);
+      } else {
+        // If current time is past the park time, schedule the park for the next day
+        currentDate = currentDate.add(1, "day").hour(10).minute(0);
       }
     }
+  }
 
-    let start = currentDate?.toDate();
+  let start = currentDate?.toDate();
 
-    let activityDurationInHours;
-    if (typeof activity.duree === "number") {
-      // Converting minutes to hours
-      activityDurationInHours = activity.duree / 60;
-    } else {
-      throw new Error(`activity.duree is not a number: `);
-    }
+  let end = currentDate.add(activityDurationInHours, "hours")?.toDate();
 
-    let end = currentDate.add(activityDurationInHours, "hours")?.toDate();
+  // Check if the activity falls in sleeping hours, if so move it to next day morning
+  if (currentDate.hour() >= 22 || currentDate.hour() < 8) {
+    currentDate = currentDate.add(1, "day").hour(6).minute(0);
+    start = currentDate.toDate();
+    end = currentDate.add(activityDurationInHours, "hours").toDate();
+  }
+  if (currentDate.isAfter(dayjs(groupDate?.endDate))) {
+    // If activity would end after the trip ends, adjust its duration
+    return;
+  }
 
-    if (!end) {
-      throw new Error(
-        `end date could not be calculated for activity: ${activity.id}`
-      );
-    }
+  const newActivity = {
+    start,
+    end,
+    activityId: activity.id,
+  };
 
-    // Check if the activity falls in sleeping hours, if so move it to next day morning
-    if (currentDate.hour() >= 22 || currentDate.hour() < 6) {
-      currentDate = currentDate.add(1, "day").hour(6).minute(0);
-      start = currentDate.toDate();
-      end = currentDate.add(activityDurationInHours, "hours").toDate();
-    }
-    if (currentDate.isAfter(dayjs(groupDate?.endDate))) {
-      // If activity would end after the trip ends, adjust its duration
-     return;
-    }
-    
+  if (!groupDate?.startDate || !groupDate?.endDate) {
+    throw new Error("Invalid group dates");
+  }
+  
+  const validActivity = validateActivityTime(tmpPlanning, newActivity, groupDate.startDate, groupDate.endDate);
+  
+  if (validActivity) {
+    tmpPlanning.push(validActivity);
+    currentDate = dayjs(validActivity.end).add(randomInt(0.5, 1), "hours"); // Add travel time to the current date
 
-    tmpPlanning.push({
-      start,
-      end,
-      activityId: activity.id,
-    });
+  } 
 
-    currentDate = dayjs(end);
-  });
+  currentDate = currentDate.add(activityDurationInHours + randomInt(0.5, 1), "hours");
+});
 
-  await addPlanningEvents(groupID, tmpPlanning);
+// Now we need to sort the tmpPlanning array as the activities were placed randomly
+tmpPlanning.sort((a, b) => a.start.getTime() - b.start.getTime());
+
+await addPlanningEvents(groupID, tmpPlanning);
 };
