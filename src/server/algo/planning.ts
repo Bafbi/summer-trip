@@ -5,6 +5,15 @@ import { addPlanningEvents, type CalendarData } from "../utils/planning";
 import { durees } from "./duree";
 
 export const generatePlaning = async (groupID: string) => {
+  const groupDate = await prisma.group.findUnique({
+    where: {
+      id: groupID,
+    },
+    select: {
+      startDate: true,
+      endDate: true,
+    },
+  })
   const topRatedActivities = await prisma.activity.findMany({
     where: {
       groupId: groupID,
@@ -33,6 +42,7 @@ export const generatePlaning = async (groupID: string) => {
   if (topRatedActivities.length === 0) {
     throw new Error("No top rated activity found");
   }
+  
   const typePriorities = [
     "tourist_attraction",
     "transit_station",
@@ -157,15 +167,15 @@ export const generatePlaning = async (groupID: string) => {
   console.log(type);
   const tmpPlanning: CalendarData[] = [];
 
-  let currentDate = dayjs();
+  let currentDate = dayjs(groupDate?.startDate);
 
   const randomInt = (min: number, max: number) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   };
-
+ // topActivities.sort((a, b) => b.Vote.length - a.Vote.length);
   topActivities.forEach((activity, index) => {
     // Wait between 1 and 3 hours before starting the activity
-    currentDate = currentDate.add(randomInt(1, 3), "hours");
+    currentDate = currentDate.add(randomInt(1, 1.5), "hours");
 
     // Adjust start time depending on the type of activity
     const isRestaurant = activity.type?.find(
@@ -230,6 +240,11 @@ export const generatePlaning = async (groupID: string) => {
       start = currentDate.toDate();
       end = currentDate.add(activityDurationInHours, "hours").toDate();
     }
+    if (currentDate.isAfter(dayjs(groupDate?.endDate))) {
+      // If activity would end after the trip ends, adjust its duration
+     return;
+    }
+    
 
     tmpPlanning.push({
       start,
