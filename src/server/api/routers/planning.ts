@@ -6,7 +6,7 @@ export const planningRouter = createTRPCRouter({
   getEvents: protectedProcedure
     .input(z.object({ groupId: z.string() }))
     .query(async ({ input, ctx }) => {
-      const events = await ctx.prisma.planning.findMany({
+      return ctx.prisma.planning.findMany({
         where: {
           groupId: input.groupId,
         },
@@ -25,13 +25,30 @@ export const planningRouter = createTRPCRouter({
           },
         },
       });
-
-      return events;
     }),
 
   generatePlaning: protectedProcedure
     .input(z.object({ groupId: z.string() }))
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       await generatePlaning(input.groupId);
+      return ctx.prisma.planning.findMany({
+        where: {
+          groupId: input.groupId,
+        },
+        select: {
+          id: true,
+          start: true,
+          end: true,
+          activity: {
+            select: {
+              place: {
+                select: {
+                  name: true,
+                },
+              },
+            },
+          },
+        },
+      });
     }),
 });
