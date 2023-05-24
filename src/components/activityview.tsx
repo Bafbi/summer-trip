@@ -5,9 +5,14 @@ import { api, type RouterOutputs } from "~/utils/api";
 import RatingStars from "./ratingstartview";
 
 const ActivityComponent: React.FC<{ groupId: string }> = ({ groupId }) => {
-  const [activity, setActivity] = useState<RouterOutputs["activity"]["getActivityToRate"]>();
+  const [activity, setActivity] =
+    useState<RouterOutputs["activity"]["getActivityToRate"]>();
 
-  const { mutate: activityMutation, isLoading } = api.activity.getActivityToRate.useMutation({
+  const {
+    mutate: activityMutation,
+    isLoading,
+    isError,
+  } = api.activity.getActivityToRate.useMutation({
     onSuccess: (activity) => {
       setActivity(activity);
     },
@@ -41,7 +46,16 @@ const ActivityComponent: React.FC<{ groupId: string }> = ({ groupId }) => {
         {"Ça t'interesse ?"}
       </h2>
       <div className="mx-auto w-full max-w-md">
-        {!isLoading && activity ? (
+        {isError ? (
+          <div className="flex flex-col items-center justify-center">
+            <p className="text-center text-2xl font-bold text-[#E49A0A]">
+              {"Oups !"}
+            </p>
+            <p className="text-center text-2xl font-bold text-[#E49A0A]">
+              {"Il n'y a plus d'activité à noter"}
+            </p>
+          </div>
+        ) : (!isLoading && activity) ? (
           <>
             <div className="mt-3 flex justify-center">
               <div className="relative h-80 w-80">
@@ -72,25 +86,32 @@ const ActivityComponent: React.FC<{ groupId: string }> = ({ groupId }) => {
             </div>
           </>
         ) : (
-          <div className="mt-3 flex justify-center">
-            <div className="relative h-80 w-80">
-              <div className="h-full w-full overflow-hidden rounded-lg shadow-xl">
-                <div className="aspect-w-1 aspect-h-1">
-                  <svg
-                    className="h-full w-full text-gray-300"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      clipRule="evenodd"
-                      d="M19.414 4.586a2 2 0 010 2.828L6.828 19.414a2 2 0 01-2.828-2.828L16.586 4.586a2 2 0 012.828 0z"
-                      fillRule="evenodd"
-                    />
-                  </svg>
+          <>
+            <div className="mt-3 flex justify-center">
+              <div className="relative h-80 w-80">
+                <div className="h-full w-full overflow-hidden rounded-lg shadow-xl">
+                  <div className="aspect-w-1 aspect-h-1">
+                    <svg
+                      className="h-full w-full text-gray-300"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        clipRule="evenodd"
+                        d="M19.414 4.586a2 2 0 010 2.828L6.828 19.414a2 2 0 01-2.828-2.828L16.586 4.586a2 2 0 012.828 0z"
+                        fillRule="evenodd"
+                      />
+                    </svg>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+            <div className="flex flex-col items-center justify-center">
+              <p className="pt-3 text-center text-2xl font-bold text-[#E49A0A]">
+                {"Oublier pas de donner un jeton!"}
+              </p>
+            </div>
+          </>
         )}
       </div>
       <div className="absolute bottom-24 mt-5 flex">

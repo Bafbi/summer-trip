@@ -55,12 +55,6 @@ const ProfilePage = () => {
                 {groupsData?.length || 0}
               </p>
             </div>
-            <div className="message-count mt-4">
-              <p className="font-semibold text-[#E49A0A] text-2xl">
-                Nombre de message envoyés:
-              </p>
-              <p className="mt-4 text-center text-[#1CCDB3] text-xl">12</p>
-            </div>
             <button
               className="mt-14 rounded-md bg-[#1CCDB3] px-4 py-2 text-white"
               onClick={() => void signOut({ redirect: true, callbackUrl: "/" })}
