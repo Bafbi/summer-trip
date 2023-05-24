@@ -8,7 +8,7 @@ export const findNewActivities = async (coordinates: {lat: number, lng: number})
 
   const types = ["restaurant|bar|night_club", "museum|amusement_park|bowling_alley"];
 
-  const placePromises = types.map((type) => {
+  const placePromises = types.flatMap((type) => {
     return maps.placesNearby({
       params: {
         location: `${coordinates.lat},${coordinates.lng}`,
@@ -23,7 +23,19 @@ export const findNewActivities = async (coordinates: {lat: number, lng: number})
 
   const activities = places.flatMap((place) => place.data.results);
 
-  return activities;
+  // use half of the activities
+  const half = Math.ceil(activities.length / 2);
+  const randomActivities = activities.sort(() => 0.5 - Math.random()).slice(0, half);
+
+
+  if (!activities) {
+    throw new Error("No activities found");
+  }
+
+  console.log(activities);
+  
+
+  return randomActivities;
 };
 
 // get location by place name with google geocode api

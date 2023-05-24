@@ -2,11 +2,11 @@ import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import {
   Calendar,
-  DayPropGetter,
-  EventProps,
-  HeaderProps,
-  ToolbarProps,
-  View,
+  type DayPropGetter,
+  type EventProps,
+  type HeaderProps,
+  type ToolbarProps,
+  type View,
   dayjsLocalizer,
 } from "react-big-calendar";
 import { api, type RouterOutputs } from "~/utils/api";
@@ -48,11 +48,7 @@ const PlanningView: React.FC<{ groupId: string }> = ({ groupId }) => {
   };
 
   const CustomTimeSlotWrapper = () => {
-    return (
-      <div>
-        {/* Contenu personnalisé du TimeSlotWrapper */}
-      </div>
-    );
+    return <div>{/* Contenu personnalisé du TimeSlotWrapper */}</div>;
   };
 
   const CustomTimeGutterWrapper = () => {
@@ -66,9 +62,9 @@ const PlanningView: React.FC<{ groupId: string }> = ({ groupId }) => {
     }
 
     return (
-      <div className="grid grid-rows-24 gap-y-6 p-3">
+      <div className="grid-rows-24 grid gap-y-6 p-3">
         {hours.map((hour, index) => (
-          <div key={index} className="text-primary row-span-1">
+          <div key={index} className="row-span-1 text-primary">
             {`${hour}h`}
           </div>
         ))}
@@ -77,12 +73,7 @@ const PlanningView: React.FC<{ groupId: string }> = ({ groupId }) => {
   };
 
   const CustomTimeGutterHeader = () => {
-   
-    return (
-      <div className="w-11">
-      
-      </div>
-    );
+    return <div className="w-11"></div>;
   };
 
   return (
@@ -109,7 +100,8 @@ const PlanningView: React.FC<{ groupId: string }> = ({ groupId }) => {
             toolbar: CustomToolbar,
             timeSlotWrapper: CustomTimeSlotWrapper,
             timeGutterHeader: CustomTimeGutterHeader,
-            timeGutterWrapper: CustomTimeGutterWrapper, // Utilise le composant personnalisé pour l'en-tête de la colonne des heures
+            timeGutterWrapper: CustomTimeGutterWrapper,
+
             week: {
               header: CustomWeekView,
             },
@@ -117,7 +109,10 @@ const PlanningView: React.FC<{ groupId: string }> = ({ groupId }) => {
               header: CustomDayView,
             },
             agenda: {
+           
               event: CustomAgendaEvent,
+              
+                
             },
           }}
           dayPropGetter={getDayProps}
@@ -193,5 +188,6 @@ const CustomAgendaEvent = (eventProps: EventProps) => {
     </div>
   );
 };
+
 
 export default PlanningView;

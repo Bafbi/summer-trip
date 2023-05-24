@@ -1,4 +1,4 @@
-import { Type, type Prisma } from "@prisma/client";
+import { Type, type Prisma, Place } from "@prisma/client";
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
@@ -45,8 +45,10 @@ export const groupRouter = createTRPCRouter({
     )
     .mutation(async ({ input, ctx }) => {
       try {
+        // Get the coordinates of the location
         const coordinates = await getLocation(input.location);
 
+        // Create the group
         const group = await ctx.prisma.group.create({
           data: {
             name: input.name,
@@ -68,63 +70,85 @@ export const groupRouter = createTRPCRouter({
           },
         });
 
+        // Find new activities near the location
         const activities = await findNewActivities(coordinates);
 
-        const typePromises = activities.flatMap((activity) => {
+        // Mapping types to the activities
+        // [{ category: "restaurant", index: [0,1] }, { category: "bar", index: 0}]
+        const typesMapping = activities.flatMap((activity, index) => {
           if (!activity.types) {
             return [];
           }
-
           return activity.types.map((type) => {
-            return ctx.prisma.type.upsert({
-              where: {
-                category: type.toString(),
-              },
-              create: {
-                category: type.toString(),
-              },
-              update: {
-                category: type.toString(),
-              },
-            });
+            return {
+              category: type.toString(),
+              index,
+            };
           });
         });
 
-        const photosPromises = activities.flatMap((activity) => {
-          if (!activity.photos) {
+        // Get the types of the activities
+        const types = await ctx.prisma.type.findMany({
+          where: {
+            category: {
+              in: typesMapping.map((type) => type.category),
+            },
+          },
+        });
+
+        // Create the types that don't exist
+        const typesToCreate = typesMapping.filter((type) => {
+          return !types.find((t) => t.category === type.category);
+        });
+        await ctx.prisma.type.createMany({
+          data: typesToCreate.map((type) => {
+            return {
+              category: type.category,
+            };
+          }),
+        });
+
+        // Get the types again
+        const allTypes = await ctx.prisma.type.findMany({
+          where: {
+            category: {
+              in: typesMapping.map((type) => type.category),
+            },
+          },
+        });
+
+        // Create the photos of the activities
+        const photoPromises = activities.flatMap((activity, index) => {
+          if (!activity.photos || !activity.photos[0]) {
             return [];
           }
-
-          return activity.photos.map((photo) => {
-            return ctx.prisma.placePhoto.create({
-              data: {
-                photoReference: photo.photo_reference,
-                width: photo.width,
-                height: photo.height,
-                main: true,
-              },
-            });
+          return ctx.prisma.placePhoto.create({
+            data: {
+              photoReference: activity.photos[0].photo_reference,
+              height: activity.photos[0].height,
+              width: activity.photos[0].width,
+              main: true,
+            },
           });
         });
 
-        const createdPhotos = await Promise.all(photosPromises);
-        const createdTypes = await Promise.all(typePromises);
+        const createdPhotos = await ctx.prisma.$transaction(photoPromises);
 
-        for (let i = 0; i < activities.length; i++) {
-          const activity = activities[i];
-          const photo = createdPhotos[i];
+        // Create the places of the activities
+        const placePromises = activities.map((activity, index) => {
+          const photo = createdPhotos[index];
 
           if (!activity || !activity.types || !activity.geometry || !photo) {
-            continue;
+            return null;
           }
 
-          const types = createdTypes.filter((type) => {
+          const types = allTypes.filter((type) => {
             return activity.types?.some((activityType) => {
               return type.category === activityType;
             });
           });
 
-          const place = await ctx.prisma.place.create({
+          return ctx.prisma.place.create({
             data: {
               placeId: activity.place_id,
               name: activity.name,
@@ -167,7 +191,14 @@ export const groupRouter = createTRPCRouter({
               },
             },
           });
-        }
+        });
+
+        //remove nulls
+        const places = placePromises.filter((place) => place !== null) as Prisma.Prisma__PlaceClient<Place, never>[];
+
+        await ctx.prisma.$transaction(places);
+
+        return group;
       } catch (error) {
         // Handle errors appropriately
         console.error(error);
@@ -307,7 +338,7 @@ export const groupRouter = createTRPCRouter({
             select: {
               name: true,
             },
-          }
+          },
         },
       });
     }),

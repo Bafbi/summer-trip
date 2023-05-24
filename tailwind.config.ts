@@ -6,6 +6,7 @@ export default {
     extend: {
       textColor: {
         primary: "#E49A0A",
+        secondary: "#FABB09",
       },
       colors: {
         primary: "#40534D",
