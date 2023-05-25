@@ -108,7 +108,7 @@ const ActivityComponent: React.FC<{ groupId: string }> = ({ groupId }) => {
             </div>
             <div className="flex flex-col items-center justify-center">
               <p className="pt-3 text-center text-2xl font-bold text-[#E49A0A]">
-                {"Oublier pas de donner un jeton!"}
+                {"Oublier pas de voter pour nous!"}
               </p>
             </div>
           </>
