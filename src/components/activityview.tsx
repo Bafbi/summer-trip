@@ -114,7 +114,7 @@ const ActivityComponent: React.FC<{ groupId: string }> = ({ groupId }) => {
           </>
         )}
       </div>
-      <div className="absolute bottom-24 mt-5 flex">
+      <div className="mt-5 flex">
         <button
           disabled={isLoading}
           onClick={() => handleRateActivity(activity?.id as string, -1)}
