@@ -63,13 +63,13 @@ const ChatView: React.FC<{ groupId: string }> = ({ groupId }) => {
     };
   }, [groupId]);
 
-  const formRef = useRef<HTMLFormElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (formRef.current) {
-      formRef.current.scrollIntoView({ behavior: "smooth" });
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, []);
+  }, [messages]);
 
   return (
     <div className="max-h-fit max-w-full rounded-lg bg-[#405340]">
@@ -127,7 +127,7 @@ const ChatView: React.FC<{ groupId: string }> = ({ groupId }) => {
             )}
           </div>
         ))}
-        
+        <div ref={messagesEndRef} />
       </div>
       <form
         onSubmit={(e) => {
@@ -136,7 +136,6 @@ const ChatView: React.FC<{ groupId: string }> = ({ groupId }) => {
           mutate({ groupId, content: input });
           }}
         className="flex items-center justify-between p-2 gap-2 sticky bottom-0"
-        ref={formRef}
       >
         <input
           value={input}
