@@ -144,7 +144,7 @@ export const generatePlaning = async (groupID: string) => {
     activity: CalendarData, 
     tripStart: Date, 
     tripEnd: Date, 
-    attempt: number = 0
+    attempt = 0
   ): CalendarData | null => {
     // Stop if we've tried adjusting the time 10 times
     // or if the activity start time has moved past the end of the trip
@@ -196,9 +196,9 @@ export const generatePlaning = async (groupID: string) => {
   });
 
   console.log(type);
-  let tmpPlanning: CalendarData[] = [];
+  const tmpPlanning: CalendarData[] = [];
 
-  let currentDate = dayjs(groupDate?.startDate);
+  const currentDate = dayjs(groupDate?.startDate);
 
   const randomInt = (min: number, max: number) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
